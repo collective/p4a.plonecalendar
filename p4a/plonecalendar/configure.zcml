@@ -1,4 +1,55 @@
 <configure
-    xmlns="http://namespaces.zope.org/zope">
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+        
+  <five:implements
+      class="Products.ATContentTypes.content.folder.ATFolder"
+      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      />
+
+  <five:implements
+      class="Products.ATContentTypes.content.folder.ATBTreeFolder"
+      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      />
+
+  <five:implements
+      class="Products.ATContentTypes.content.topic.ATTopic"
+      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      />
+
+  <five:traversable
+      class="Products.ATContentTypes.content.folder.ATBTreeFolder"
+      />
+  <five:traversable
+      class="Products.ATContentTypes.content.folder.ATFolder"
+      />
+  <five:traversable
+      class="Products.ATContentTypes.content.topic.ATTopic"
+      />
+
+  <adapter factory=".calendar.FolderCalendarConfig" />
+
+  <adapter factory=".eventprovider.ATEventProvider" />
+  <adapter factory=".eventprovider.TopicEventProvider" />
+  <adapter factory=".eventprovider.BrainEvent" />
+
+  <configure package="p4a.calendar.browser">
+    <browser:page
+        name="folder_listing"
+        for="p4a.calendar.interfaces.ICalendarEnhanced"
+        permission="zope2.View"
+        class=".month.MonthView"
+        template="month.pt"
+        />
+
+    <browser:page
+        name="atct_topic_view"
+        for="p4a.calendar.interfaces.ICalendarEnhanced"
+        permission="zope2.View"
+        class=".month.MonthView"
+        template="month.pt"
+        />
+  </configure>
 
 </configure>
