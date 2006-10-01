@@ -52,10 +52,13 @@ class iCalendarView(object):
         
         The PUT method is found on the view "icalendar.ics". This
         can be slightly confusing, as it's there is no configure.zcml
-        entry for it.
+        entry for it. 
+        This is also the reason why the export view "icalendar.ics" has
+        to be a template and not an attribute. As a template it is
+        called by calling the view class, as an attribute, it is called
+        by traversing to a default browser element, which is the attribute.
+        That attribute doesn't have a PUT-method and WebDAV stops working.
         """
-        #ical_text = REQUEST['BODYFILE']
-        #file.seek(0)
         ct = getToolByName(self.context, 'portal_calendar')
         ct.importCalendar(REQUEST['BODYFILE'], dest=self.context, do_action=True)
         RESPONSE.setStatus(204)
