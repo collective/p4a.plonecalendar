@@ -24,20 +24,6 @@ zcml.load_config('configure.zcml', p4a.calendar)
 import p4a.plonecalendar
 zcml.load_config('configure.zcml', p4a.plonecalendar)
 
-def testclass_builder(**kwargs):
-    class PloneIntegrationTestCase(PloneTestCase.PloneTestCase):
-        """Base integration TestCase for p4a.plonecalendar."""
-    
-        # Commented out for now, it gets blasted at the moment anyway.
-        # Place it in the protected section if you need it.
-        #def afterSetup(self):
-        #    """
-        #    """
-        #    pass
-    for key, value in kwargs.items():
-        setattr(PloneIntegrationTestCase, key, value)
-    return PloneIntegrationTestCase
-
 def test_suite():
     from unittest import TestSuite, makeSuite
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
@@ -46,7 +32,7 @@ def test_suite():
     suite.addTest(ZopeDocFileSuite(
         'calendar.txt',
         package='p4a.plonecalendar',
-        test_class=testclass_builder()
+        test_class=PloneTestCase.PloneTestCase,
         )
     )
 
