@@ -34,7 +34,9 @@ Lets check out the default view and make sure we can get some activity.
 We do a query for the weeks and make sure the results have the event
 we created earlier.
 
-  >>> weeks = view.weeks(daydate=datetime(2006, 9, 1), firstweekday=6)
+  >>> view.default_day = daydate=datetime(2006, 9, 1)
+  >>> view.firstweekday = 6
+  >>> weeks = view.weeks()
   >>> day = weeks[4]['days'][4]
   >>> day['day']
   28
