@@ -88,4 +88,4 @@ class BrainEvent(object):
 
     @property
     def local_url(self):
-        return self.context.absolute_url()
+        return self.context.getURL()
