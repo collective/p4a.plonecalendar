@@ -1,0 +1,45 @@
+<configure
+    xmlns="http://namespaces.zope.org/browser">
+
+  <menu
+      id="object_buttons"
+      title="Plone Content Drop-Down Menu"
+      />
+      
+  <menuItem
+      menu="object_buttons"
+      for="p4a.calendar.interfaces.IPossibleCalendar"
+      title="Activate / Configure Calendar"
+      action="${object_url}/calendar-config.html"
+      permission="cmf.ModifyPortalContent"
+      />
+
+  <page
+      name="icalendar.ics"
+      for="p4a.calendar.interfaces.ICalendarEnhanced"
+      permission="zope2.View"
+      class=".icalendar.iCalendarView"
+      template="icalendar.pt"
+      allowed_interface=".icalendar.IiCalendarView"
+      />
+
+
+  <configure package="p4a.calendar.browser">
+    <page
+        name="folder_listing"
+        for="p4a.calendar.interfaces.ICalendarEnhanced"
+        permission="zope2.View"
+        class=".month.MonthView"
+        template="month.pt"
+        />
+
+    <page
+        name="atct_topic_view"
+        for="p4a.calendar.interfaces.ICalendarEnhanced"
+        permission="zope2.View"
+        class=".month.MonthView"
+        template="month.pt"
+        />
+  </configure>
+
+</configure>

@@ -1,8 +1,11 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    xmlns:five="http://namespaces.zope.org/five">
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:meta="http://namespaces.zope.org/meta">
         
+  <meta:redefinePermission from="cmf.ModifyPortalContent" to="p4a.calendar.ModifyContent" />
+
   <five:implements
       class="Products.ATContentTypes.content.folder.ATFolder"
       interface="p4a.calendar.interfaces.IPossibleCalendar"
@@ -34,22 +37,6 @@
   <adapter factory=".eventprovider.TopicEventProvider" />
   <adapter factory=".eventprovider.BrainEvent" />
 
-  <configure package="p4a.calendar.browser">
-    <browser:page
-        name="folder_listing"
-        for="p4a.calendar.interfaces.ICalendarEnhanced"
-        permission="zope2.View"
-        class=".month.MonthView"
-        template="month.pt"
-        />
-
-    <browser:page
-        name="atct_topic_view"
-        for="p4a.calendar.interfaces.ICalendarEnhanced"
-        permission="zope2.View"
-        class=".month.MonthView"
-        template="month.pt"
-        />
-  </configure>
+  <include package=".browser" />
 
 </configure>
