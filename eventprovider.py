@@ -38,7 +38,7 @@ class ATEventProvider(object):
         path = '/'.join(self.context.getPhysicalPath())
         event_brains = catalog(portal_type='Event',
                                path=path)
-        return event_brains
+        return (interfaces.IEvent(x) for x in event_brains)
         
 
 class TopicEventProvider(object):
