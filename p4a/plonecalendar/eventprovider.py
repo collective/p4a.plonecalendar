@@ -69,6 +69,12 @@ class BrainEvent(object):
 
     def __init__(self, context):
         self.context = context
+        self.event = None
+
+    def _getEvent(self):
+        if self.event is None:
+            self.event = self.context.getObject()
+        return self.event
     
     @property
     def title(self):
@@ -89,3 +95,13 @@ class BrainEvent(object):
     @property
     def local_url(self):
         return self.context.getURL()
+
+    @property
+    def type(self):
+        type = self._getEvent().eventType
+        # This is a list of unicode strings, typically.
+        # We want just one string, so we take the first one.
+        if type:
+            return cmfutils.cookString(type[0])
+        return ''
+        
