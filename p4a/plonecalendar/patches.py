@@ -2,6 +2,7 @@
 
 def apply_patches():
     _apply_getSubObject_patch()
+    _apply_DynamicView_patch()
 
 def _apply_getSubObject_patch():
     """Apply a patch to AT < 1.4 so that traversal checks for data
@@ -77,3 +78,86 @@ def _apply_getSubObject_patch():
         return None
 
     BaseObject.getSubObject = getSubObject
+
+
+
+def _apply_DynamicView_patch():
+    from logging import info
+    info("p4a.plonecalendar: "
+         "Extending dynamic view support with interfaces.")
+
+    from zope.interface import Interface
+
+    class IDynamicallyViewable(Interface):
+
+        def getDefaultViewMethod():
+            """Get the name of the default view method
+            """
+            
+        def getAvailableViewMethods():
+            """Get a tuple of registered view method names
+            """
+            
+        def getAvailableLayouts(self):
+            """Get the layouts for this object
+            
+            Returns tuples of tuples of view name + title.
+            """
+
+
+    def getDefaultViewMethod(self, context):
+        """Get the default view method from the FTI
+        """
+        adapter = IDynamicallyViewable(context, None)
+        if adapter is not None:
+            return adapter.getDefaultViewMethod()
+        # Fall back to old FTI information
+        return str(self.default_view)
+
+    def getAvailableViewMethods(self, context):
+        """Get a tuple of registered view methods
+        """
+        adapter = IDynamicallyViewable(context, None)
+        if adapter is not None:
+            return adapter.getAvailableViewMethods()
+
+        # Fall back to old FTI information
+        methods = self.view_methods
+        if isinstance(methods, basestring):
+            methods = (methods,)
+        return tuple(methods)
+
+    def getAvailableLayouts(self):
+        """Get the layouts registered for this object
+        """
+        adapter = IDynamicallyViewable(self, None)
+        if adapter is not None:
+            return adapter.getAvailableLayouts()
+
+        # Fall back to old FTI information
+        fti = self.getTypeInfo()
+        if fti is None:
+            return ()
+        result = []
+        method_ids = fti.getAvailableViewMethods(self)
+        for mid in method_ids:
+            method = getattr(self, mid, None)
+            if method is not None:
+                # a method might be a template, script or method
+                try:
+                    title = method.aq_inner.aq_explicit.title_or_id()
+                except AttributeError:
+                    title = mid
+                result.append((mid, title))
+            
+        return result
+
+    from Products.CMFDynamicViewFTI.fti import DynamicViewTypeInformation
+    DynamicViewTypeInformation.getAvailableViewMethods = getAvailableViewMethods
+    DynamicViewTypeInformation.getDefaultViewMethod = getDefaultViewMethod
+
+    from Products.CMFDynamicViewFTI.browserdefault import BrowserDefaultMixin
+    BrowserDefaultMixin.getAvailableLayouts = getAvailableLayouts
+
+    from Products.CMFDynamicViewFTI import interfaces
+    interfaces.IDynamicallyViewable = IDynamicallyViewable
