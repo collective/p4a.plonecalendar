@@ -61,7 +61,8 @@ class TopicEventProvider(object):
 
     def all_events(self):
         query = self.context.buildQuery()
-        return self.context.queryCatalog() 
+        event_brains = self.context.queryCatalog() 
+        return (interfaces.IEvent(x) for x in event_brains)
 
 class BrainEvent(object):
     interface.implements(interfaces.IEvent)
