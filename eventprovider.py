@@ -23,14 +23,21 @@ class ATEventProvider(object):
     def __init__(self, context):
         self.context = context
         
-    def gather_events(self, start, stop):
+    def gather_events(self, start=None, stop=None, **kw):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
-        event_brains = catalog(portal_type='Event',
-                               path=path,
-                               start={'query': dt2DT(start), 'range': 'min'},
-                               end={'query': dt2DT(stop), 'range': 'max'})
+        
+        if kw.has_key('title'):
+            # The catalog calls this property "Title" with a 
+            # capital T.
+            kw['Title'] = kw['title']
+            del kw['title']
+        if start is not None:
+            kw['start']={'query': dt2DT(start), 'range': 'min'}
+        if stop is not None:
+            kw['end']={'query': dt2DT(stop), 'range': 'max'}
 
+        event_brains = catalog(portal_type='Event', path=path, **kw)
         return (interfaces.IEvent(x) for x in event_brains)
     
     def all_events(self):
