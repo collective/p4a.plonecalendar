@@ -2,8 +2,9 @@ from Testing import ZopeTestCase
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
 
-DEPENDENCIES = ['Archetypes']
+DEPENDENCIES = ['Archetypes', 'ATContentTypes']
 PRODUCT_DEPENDENCIES = ['MimetypesRegistry', 'PortalTransforms']
+                        
 
 # Install all (product-) dependencies, install them too
 for dependency in PRODUCT_DEPENDENCIES + DEPENDENCIES:
@@ -31,7 +32,7 @@ from p4a.calendar.interfaces import ICalendarConfig, IEventProvider
 
 class ATEventProviderTest(AudioTestCase, EventProviderTestMixin):
 
-    def afterSetUp(self):
+    def eventSetUp(self):
         # Create folder.
         self.folder.invokeFactory('Folder', id='calendar-folder')
         calendarfolder = self.folder['calendar-folder']
@@ -53,8 +54,22 @@ class ATEventProviderTest(AudioTestCase, EventProviderTestMixin):
         # Activate calendaring capabilities on this folder
         config = ICalendarConfig(calendarfolder)
         config.calendar_activated = True
-        self.provider = IEventProvider(calendarfolder)
         
+    def afterSetUp(self):
+        self.eventSetUp()
+        self.provider = IEventProvider(self.folder['calendar-folder'])
+
+class TopicEventProviderTest(ATEventProviderTest):
+    
+    def afterSetUp(self):
+        self.eventSetUp()
+        self.loginAsPortalOwner()
+        self.folder.invokeFactory('Topic', id='calendar-topic')
+        topic = self.folder['calendar-topic']
+        criteria = topic.addCriterion('portal_type', 'ATPortalTypeCriterion')
+        criteria.value = (u'Event',)
+        self.provider = IEventProvider(topic)
+
     
 def test_suite():
     from unittest import TestSuite, makeSuite
@@ -68,6 +83,7 @@ def test_suite():
         )
     )
     suite.addTests(makeSuite(ATEventProviderTest))
+    suite.addTests(makeSuite(TopicEventProviderTest))
     suite.layer = layer.ZCMLLayer
 
     return suite

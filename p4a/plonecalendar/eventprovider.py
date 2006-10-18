@@ -16,6 +16,20 @@ def dt2DT(dt):
 def DT2dt(dt):
     return datetime.datetime(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute())
 
+def _make_zcatalog_query(start, stop, kw):
+    """Takes a IEventProvider query and makes it a ZCaralog query"""
+    if kw.has_key('title'):
+        # The catalog calls this property "Title" with a 
+        # capital T.
+        kw['Title'] = kw['title']
+        del kw['title']
+    if start is not None:
+        kw['start']={'query': dt2DT(start), 'range': 'min'}
+    if stop is not None:
+        kw['end']={'query': dt2DT(stop), 'range': 'max'}
+    return kw
+
+    
 class ATEventProvider(object):
     interface.implements(interfaces.IEventProvider)
     component.adapts(atapi.BaseObject)
@@ -26,17 +40,7 @@ class ATEventProvider(object):
     def gather_events(self, start=None, stop=None, **kw):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
-        
-        if kw.has_key('title'):
-            # The catalog calls this property "Title" with a 
-            # capital T.
-            kw['Title'] = kw['title']
-            del kw['title']
-        if start is not None:
-            kw['start']={'query': dt2DT(start), 'range': 'min'}
-        if stop is not None:
-            kw['end']={'query': dt2DT(stop), 'range': 'max'}
-
+        kw = _make_zcatalog_query(start, stop, kw)
         event_brains = catalog(portal_type='Event', path=path, **kw)
         return (interfaces.IEvent(x) for x in event_brains)
     
@@ -61,13 +65,12 @@ class TopicEventProvider(object):
         
         return x.portal_type == 'Event' and x.start >= start and x.end <= stop
     
-    def gather_events(self, start, stop):
-        query = self.context.buildQuery()
-        return (interfaces.IEvent(x) for x in self.context.queryCatalog() 
-                if self.acceptable_event(x, start, stop))
+    def gather_events(self, start=None, stop=None, **kw):
+        kw = _make_zcatalog_query(start, stop, kw)
+        return (interfaces.IEvent(x) for x in self.context.queryCatalog(kw))
 
     def all_events(self):
-        query = self.context.buildQuery()
+        #query = self.context.buildQuery()
         event_brains = self.context.queryCatalog() 
         return (interfaces.IEvent(x) for x in event_brains)
 
