@@ -19,14 +19,6 @@
       allowed_interface=".icalendar.IiCalendarView"
       />
 
-    <page
-        name="events.html"
-        for="p4a.calendar.interfaces.ICalendarEnhanced"
-        permission="p4a.calendar.ViewContent"
-        class=".events_listing.EventListingView"
-        template="events_listing.pt"
-        />
-
   <configure package="p4a.calendar.browser">
     <page
         name="folder_listing"

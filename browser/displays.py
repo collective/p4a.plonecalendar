@@ -28,4 +28,5 @@ class CalendarDynamicViews(object):
         """        
         return (("month.html", "Month view"),
                 ("events.html", "Event list"),
+                ("past_events.html", "Event archive"),
                 )
