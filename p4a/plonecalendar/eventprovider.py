@@ -81,6 +81,9 @@ class BrainEvent(object):
     def __init__(self, context):
         self.context = context
         self.event = None
+        
+    def __cmp__(self, other):
+        return cmp(self.start, other.start)
 
     def _getEvent(self):
         if self.event is None:
