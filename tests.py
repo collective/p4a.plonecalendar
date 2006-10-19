@@ -16,12 +16,14 @@ PRODUCTS += DEPENDENCIES
 PloneTestCase.setupPloneSite(products=PRODUCTS)
 
 from Products.Five import zcml
+import p4a.common
 import p4a.calendar
 import p4a.plonecalendar
 
 class AudioTestCase(PloneTestCase.PloneTestCase):
     def _setup(self):
         PloneTestCase.PloneTestCase._setup(self)
+        zcml.load_config('configure.zcml', p4a.common)
         zcml.load_config('configure.zcml', p4a.calendar)
         zcml.load_config('configure.zcml', p4a.plonecalendar)
 
