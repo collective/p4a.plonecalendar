@@ -26,9 +26,12 @@ class FolderCalendarConfig(object):
                 ifaces += interfaces.ICalendarEnhanced
             if not annointerfaces.IAttributeAnnotatable.providedBy(self.context):
                 ifaces += annointerfaces.IAttributeAnnotatable
+            if getattr(self.context, 'layout', None) is not None:
+                self.context.layout = 'month.html'
         else:
             if interfaces.ICalendarEnhanced in ifaces:
                 ifaces -= interfaces.ICalendarEnhanced
+            delattr(self.context, 'layout')
         interface.directlyProvides(self.context, ifaces)
 
     calendar_activated = property(__get_calendar_activated,
