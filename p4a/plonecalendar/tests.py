@@ -72,7 +72,25 @@ class TopicEventProviderTest(ATEventProviderTest):
         criteria.value = (u'Event',)
         self.provider = IEventProvider(topic)
 
-    
+class LocationFilterTest(AudioTestCase):
+
+    def afterSetUp(self):
+        # Create folder.
+        self.folder.invokeFactory('Folder', id='calendarfolder')
+        calendarfolder = self.folder['calendarfolder']
+        # Activate calendaring capabilities on this folder
+        config = ICalendarConfig(calendarfolder)
+        config.calendar_activated = True
+        
+    def testLocationFilter(self):
+        calendar = self.folder.calendarfolder
+        view = calendar.unrestrictedTraverse('month.html')
+        filter_html = view.renderFilter()
+        self.failUnlessEqual(filter_html, '')
+        catalog = self.folder.portal_catalog.addIndex('location', 'FieldIndex')
+        filter_html = view.renderFilter()
+        self.failUnless(filter_html.startswith('<span class="filter">'))
+        
 def test_suite():
     from unittest import TestSuite, makeSuite
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
@@ -86,6 +104,7 @@ def test_suite():
     )
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
+    suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
 
     return suite
