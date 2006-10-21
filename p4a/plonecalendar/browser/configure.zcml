@@ -19,24 +19,6 @@
       allowed_interface=".icalendar.IiCalendarView"
       />
 
-  <configure package="p4a.calendar.browser">
-    <page
-        name="folder_listing"
-        for="p4a.calendar.interfaces.ICalendarEnhanced"
-        permission="zope2.View"
-        class=".month.MonthView"
-        template="month.pt"
-        />
-
-    <page
-        name="atct_topic_view"
-        for="p4a.calendar.interfaces.ICalendarEnhanced"
-        permission="zope2.View"
-        class=".month.MonthView"
-        template="month.pt"
-        />
-      
-  </configure>
   
   <zope:adapter 
         factory=".displays.CalendarDynamicViews"
