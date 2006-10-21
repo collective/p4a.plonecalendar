@@ -14,12 +14,20 @@ class LocationFilter(object):
     
     template = ZopeTwoPageTemplateFile('location_filter.pt')
     
-    def __init__(self, context, request, view):
+    def __init__(self, context=None, request=None, view=None):
         self.context = context
         self.request = request
         self.view = view
 
     def update(self):
+        catalog = self.context.portal_catalog
+        if not 'location' in  catalog.indexes():
+            self.do_render = False
+            return
+        locations = filter(None, catalog.uniqueValuesFor('location'))
+        self.locations = ('', ) + locations
+        self.selected = self.request.form.get('location','')
+
         hidden_fields = []
         for key, value in self.request.form.items():
             # Keep form values that are likely to modify the view:
@@ -27,12 +35,11 @@ class LocationFilter(object):
                 hidden_fields.append({'name': key, 'value': value})
         self.hidden_fields = hidden_fields
         self.url = self.request.ACTUAL_URL
-        catalog = self.context.portal_catalog
-        locations = filter(None, catalog.uniqueValuesFor('location'))
-        self.locations = ('', ) + locations
-        self.selected = self.request.form.get('location','')
+        self.do_render = True
     
     def render(self):
+        if not self.do_render:
+            return ''
         # Slight trickery needed. This could also be done by
         # letting the provider inherit from aq.implicit, and
         # wrapping it in self, but I haven't tested.
