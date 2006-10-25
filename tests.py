@@ -61,6 +61,11 @@ class ATEventProviderTest(AudioTestCase, EventProviderTestMixin):
         self.eventSetUp()
         self.provider = IEventProvider(self.folder['calendar-folder'])
 
+    def test_createlink(self):
+        link = self.provider.event_creation_link()
+        self.failUnlessEqual(link, "http://nohost/plone/Members/test_user_1_/calendar-folder/createObject?type_name=Event")
+
+
 class TopicEventProviderTest(ATEventProviderTest):
     
     def afterSetUp(self):
@@ -71,6 +76,10 @@ class TopicEventProviderTest(ATEventProviderTest):
         criteria = topic.addCriterion('portal_type', 'ATPortalTypeCriterion')
         criteria.value = (u'Event',)
         self.provider = IEventProvider(topic)
+
+    def test_createlink(self):
+        link = self.provider.event_creation_link()
+        self.failUnlessEqual(link, "")
 
 class LocationFilterTest(AudioTestCase):
 
@@ -85,10 +94,10 @@ class LocationFilterTest(AudioTestCase):
     def testLocationFilter(self):
         calendar = self.folder.calendarfolder
         view = calendar.unrestrictedTraverse('month.html')
-        filter_html = view.renderFilter()
+        filter_html = view.render_filter()
         self.failUnlessEqual(filter_html, '')
         catalog = self.folder.portal_catalog.addIndex('location', 'FieldIndex')
-        filter_html = view.renderFilter()
+        filter_html = view.render_filter()
         self.failUnless(filter_html.startswith('<span class="filter">'))
         
 def test_suite():

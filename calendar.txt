@@ -29,7 +29,7 @@ folder.
 
 Lets check out the default view and make sure we can get some activity.
 
-  >>> view = calendarfolder.unrestrictedTraverse('@@folder_listing')
+  >>> view = calendarfolder.unrestrictedTraverse('@@month.html')
 
 We do a query for the weeks and make sure the results have the event
 we created earlier.

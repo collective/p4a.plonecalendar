@@ -50,7 +50,12 @@ class ATEventProvider(object):
         event_brains = catalog(portal_type='Event',
                                path=path)
         return (interfaces.IEvent(x) for x in event_brains)
-        
+    
+    def event_creation_link(self, start=None, stop=None):
+        if self.context.portal_membership.checkPermission(
+            'Add portal content',self.context):
+            return self.context.absolute_url() + '/createObject?type_name=Event'
+        return ''
 
 class TopicEventProvider(object):
     interface.implements(interfaces.IEventProvider)
@@ -73,6 +78,10 @@ class TopicEventProvider(object):
         #query = self.context.buildQuery()
         event_brains = self.context.queryCatalog() 
         return (interfaces.IEvent(x) for x in event_brains)
+
+    def event_creation_link(self, start=None, stop=None):
+        return ""
+
 
 class BrainEvent(object):
     interface.implements(interfaces.IEvent)
