@@ -4,8 +4,6 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:meta="http://namespaces.zope.org/meta">
         
-  <meta:redefinePermission from="cmf.ModifyPortalContent" to="p4a.calendar.ModifyContent" />
-
   <five:implements
       class="Products.ATContentTypes.content.folder.ATFolder"
       interface="p4a.calendar.interfaces.IPossibleCalendar"
