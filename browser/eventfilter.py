@@ -14,6 +14,8 @@ class LocationFilter(object):
     
     template = ZopeTwoPageTemplateFile('location_filter.pt')
     
+    field_name = 'region' # Name of the location field for easy overriding
+    
     def __init__(self, context=None, request=None, view=None):
         self.context = context
         self.request = request
@@ -21,12 +23,13 @@ class LocationFilter(object):
 
     def update(self):
         catalog = self.context.portal_catalog
-        if not 'location' in  catalog.indexes():
+        if not self.field_name in  catalog.indexes():
             self.do_render = False
             return
-        locations = filter(None, catalog.uniqueValuesFor('location'))
-        self.locations = ('', ) + locations
-        self.selected = self.request.form.get('location','')
+        locations = filter(None, catalog.uniqueValuesFor(self.field_name))
+        if not '' in locations:
+            self.locations = ('', ) + locations
+        self.selected = self.request.form.get(self.field_name,'')
 
         hidden_fields = []
         for key, value in self.request.form.items():
