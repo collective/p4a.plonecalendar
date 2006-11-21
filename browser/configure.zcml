@@ -19,7 +19,14 @@
       allowed_interface=".icalendar.IiCalendarView"
       />
 
-  
+  <page
+      name="import_from_url"
+      for="p4a.calendar.interfaces.ICalendarEnhanced"
+      permission="cmf.ModifyPortalContent"
+      class=".icalendar.iCalendarView"
+      attribute="import_from_url"
+      />
+      
   <zope:adapter 
         factory=".displays.CalendarDynamicViews"
         />
