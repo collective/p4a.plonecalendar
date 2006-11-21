@@ -1,3 +1,5 @@
+import urllib2
+from StringIO import StringIO
 from zope import interface
 from Products.CMFCore.utils import getToolByName
 from p4a.calendar.interfaces import IEventProvider
@@ -63,3 +65,12 @@ class iCalendarView(object):
         ct.importCalendar(REQUEST['BODYFILE'], dest=self.context, do_action=True)
         RESPONSE.setStatus(204)
         return RESPONSE
+
+    def import_from_url(self, url):
+        if not self.has_ical_support():
+            return "Calendaring product not installed."
+        res = urllib2.urlopen(url)
+        ical = StringIO('\n'.join(res.readlines()))
+        ct = getToolByName(self.context, 'portal_calendar')
+        ct.importCalendar(ical, dest=self.context, do_action=True)
+        return "Import done!"
