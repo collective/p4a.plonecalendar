@@ -14,7 +14,7 @@ class LocationFilter(object):
     
     template = ZopeTwoPageTemplateFile('location_filter.pt')
     
-    field_name = 'region' # Name of the location field for easy overriding
+    field_name = 'location' # Name of the location field for easy overriding
     
     def __init__(self, context=None, request=None, view=None):
         self.context = context
