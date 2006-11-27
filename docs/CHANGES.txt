@@ -15,6 +15,10 @@ Bugfixes
 Features
 --------
 
+* Now has support for setting up a site/portal which means calendaring
+  functionality is only available after this has been performed on the
+  site/portal (Rocky Burt)
+
 * Added support to import iCalendar from a remote URL (Lennart Regebro)
 
 * Added support for add links (Lennart Regebro)
