@@ -5,8 +5,9 @@
   <menuItem
       menu="object_buttons"
       for="p4a.calendar.interfaces.IPossibleCalendar"
-      title="Activate / Configure Calendar"
-      action="${object_url}/calendar-config.html"
+      title="Configure Calendar"
+      action="string:${object_url}/calendar-config.html"
+      filter="object/@@p4acalsupport/support_enabled"
       permission="cmf.ModifyPortalContent"
       />
 
@@ -19,6 +20,14 @@
       allowed_interface=".icalendar.IiCalendarView"
       />
 
+  <page
+      name="p4acalsupport"
+      for="*"
+      class=".support.Support"
+      permission="zope.Public"
+      allowed_interface="p4a.calendar.interfaces.IBasicCalendarSupport"
+      />
+  
   <page
       name="import_from_url"
       for="p4a.calendar.interfaces.ICalendarEnhanced"
