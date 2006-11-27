@@ -1,0 +1,26 @@
+=========================
+p4a.plonecalendar Changes
+=========================
+
+
+p4a.calendar 1.0beta1 (unreleased)
+==================================
+
+Bugfixes
+--------
+
+* Fixed bug where URL retrieval was getting the brain's incorrect URL
+  (Lennart Regebro)
+
+Features
+--------
+
+* Added support to import iCalendar from a remote URL (Lennart Regebro)
+
+* Added support for add links (Lennart Regebro)
+
+
+p4a.calendar 1.0alpha1 (2006-10-21)
+===================================
+
+* First release with unrecorded set of functionality (Rocky Burt)
