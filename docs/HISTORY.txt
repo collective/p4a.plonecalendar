@@ -1,9 +1,0 @@
-Changelog for p4a.plonecalendar
-
-    (name of developer listed in brackets)
-
-p4a.plonecalendar - 0.1 Unreleased
-
-    - Initial package structure.
-      [zopeskel]
-
