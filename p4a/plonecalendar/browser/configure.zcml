@@ -6,7 +6,7 @@
       menu="object_buttons"
       for="p4a.calendar.interfaces.IPossibleCalendar"
       title="Configure Calendar"
-      action="string:${object_url}/calendar-config.html"
+      action="${object_url}/calendar-config.html"
       filter="object/@@p4acalsupport/support_enabled"
       permission="cmf.ModifyPortalContent"
       />
