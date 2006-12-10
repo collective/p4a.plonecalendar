@@ -74,3 +74,31 @@ class iCalendarView(object):
         ct = getToolByName(self.context, 'portal_calendar')
         ct.importCalendar(ical, dest=self.context, do_action=True)
         return "Import done!"
+
+    def import_from_hcal(self, url):
+		if not self.has_ical_support():
+			return "Calendaring product not installed."
+
+		import os
+		import Globals
+
+		# lxml.etree introduces a new class, lxml.etree.XSLT. 
+		# The class can be given an ElementTree object to construct an XSLT transformer:
+		
+		from lxml import etree
+		
+		f = os.path.join(Globals.package_home(globals()), 'xhtml2vcal.xsl')
+		xslt_doc = etree.parse(f)
+		transform = etree.XSLT(xslt_doc)
+
+		# You can then run the transformation on an ElementTree document by simply calling it, 
+		# and this results in another ElementTree object:
+
+		remote_page = urllib2.urlopen(url)
+		parsed_page = etree.parse(remote_page)
+		result = transform.apply(parsed_page)
+		ical = StringIO(transform.tostring(result))
+		ct = getToolByName(self.context, 'portal_calendar')
+		ct.importCalendar(ical, dest=self.context, do_action=True)
+		return "Import done!"
+        
