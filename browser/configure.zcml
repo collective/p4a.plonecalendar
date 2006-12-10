@@ -35,6 +35,14 @@
       class=".icalendar.iCalendarView"
       attribute="import_from_url"
       />
+
+  <page
+      name="import_from_hcal"
+      for="p4a.calendar.interfaces.ICalendarEnhanced"
+      permission="cmf.ModifyPortalContent"
+      class=".icalendar.iCalendarView"
+      attribute="import_from_hcal"
+      />
       
   <zope:adapter 
         factory=".displays.CalendarDynamicViews"
