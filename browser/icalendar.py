@@ -101,4 +101,13 @@ class iCalendarView(object):
         ct = getToolByName(self.context, 'portal_calendar')
         ct.importCalendar(ical, dest=self.context, do_action=True)
         return "Import done!"
-       
+    
+    def importFormHandler(self):
+        if self.request.get('file') is not None:
+            ct = getToolByName(self.context, 'portal_calendar')
+            ct.importCalendar(self.request.get('file'), dest=self.context, do_action=True)
+        if self.request.get('url') is not None:
+            self.import_from_url(self.request.get('url'))
+            
+        
+ 

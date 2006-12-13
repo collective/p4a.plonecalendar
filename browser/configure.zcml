@@ -43,7 +43,16 @@
       class=".icalendar.iCalendarView"
       attribute="import_from_hcal"
       />
-      
+
+  <page
+      name="import.html"
+      for="p4a.calendar.interfaces.ICalendarEnhanced"
+      permission="zope2.View"
+      class=".icalendar.iCalendarView"
+      template="icalendar_import.pt"
+      allowed_interface=".icalendar.IiCalendarView"
+      />
+
   <zope:adapter 
         factory=".displays.CalendarDynamicViews"
         />
