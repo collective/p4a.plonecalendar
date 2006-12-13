@@ -4,6 +4,12 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:meta="http://namespaces.zope.org/meta">
         
+  <browser:resourceDirectory
+      name="p4aplonecalendar"
+      directory="browser/resources"
+      permission="p4a.calendar.ViewContent"
+      />
+        
   <five:implements
       class="Products.ATContentTypes.content.folder.ATFolder"
       interface="p4a.calendar.interfaces.IPossibleCalendar"
