@@ -22,18 +22,18 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
         cal = self.folder['calendar-folder']
         id = cal.invokeFactory('Event', id='event1')
         cal['event1'].update(title='First Event',
-                             startDate=DateTime('2006-09-28 08:30am'),
-                             endDate=DateTime('2006-09-28 09:30am'))
+                             startDate=DateTime('2006-09-28 08:30am GMT+0'),
+                             endDate=DateTime('2006-09-28 09:30am GMT+0'))
         id = cal.invokeFactory('Event', id='event2')
         cal['event2'].update(title='Second Event',
-                             startDate=DateTime('2006-09-29 08:30am'),
-                             endDate=DateTime('2006-09-29 09:30am'))
+                             startDate=DateTime('2006-09-29 08:30am GMT+0'),
+                             endDate=DateTime('2006-09-29 09:30am GMT+0'))
         id = cal.invokeFactory('Event', id='meeting1')
         # Calling this event "Meeting" is just to have one event that does
         # not have the word "Event" in the title.
         cal['meeting1'].update(title='First Meeting',
-                               startDate=DateTime('2006-09-30 08:30am'),
-                               endDate=DateTime('2006-09-30 09:30am'))
+                               startDate=DateTime('2006-09-30 08:30am GMT+0'),
+                               endDate=DateTime('2006-09-30 09:30am GMT+0'))
 
         # Activate calendaring capabilities on this folder
         config = ICalendarConfig(cal)
