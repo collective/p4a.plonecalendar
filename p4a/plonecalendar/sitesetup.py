@@ -1,4 +1,3 @@
-from zope.component import interfaces as compifaces
 from p4a.calendar import interfaces
 from p4a.plonecalendar import content
 from p4a.common import site
@@ -28,8 +27,8 @@ def setup_site(site):
       <CalendarSupport ...>
 
     """
-    
-    sm = compifaces.ISiteManager(site)
+
+    sm = site.getSiteManager()
     if not sm.queryUtility(interfaces.ICalendarSupport):
         sm.registerUtility(interfaces.ICalendarSupport,
                            content.CalendarSupport('calendar_support'))
