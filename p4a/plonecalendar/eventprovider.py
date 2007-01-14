@@ -10,11 +10,13 @@ from Products.Archetypes import atapi
 from Products.ATContentTypes.content import topic
 
 def dt2DT(dt):
-    s = "%04i-%02i-%02i %02i:%02i" % (dt.year, dt.month, dt.day, dt.hour, dt.minute)
+    s = "%04i-%02i-%02i %02i:%02i" % (dt.year, dt.month, dt.day,
+                                      dt.hour, dt.minute)
     return DateTime(s)
 
 def DT2dt(dt):
-    return datetime.datetime(dt.year(), dt.month(), dt.day(), dt.hour(), dt.minute())
+    return datetime.datetime(dt.year(), dt.month(), dt.day(),
+                             dt.hour(), dt.minute())
 
 def _make_zcatalog_query(start, stop, kw):
     """Takes a IEventProvider query and makes it a ZCaralog query"""
