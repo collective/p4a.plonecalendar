@@ -38,11 +38,11 @@ we created earlier.
   >>> view.firstweekday = 6
   >>> weeks = view.weeks()
   >>> day = weeks[4]['days'][4]
-  >>> day['day']
+  >>> day.day
   28
-  >>> len(day['events'])
+  >>> len(day.events)
   1
-  >>> event = day['events'][0]
+  >>> event = day.events[0]
   >>> event['title']
   'First Event'
   >>> event['timespan']
