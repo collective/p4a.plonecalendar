@@ -3,8 +3,8 @@ p4a.plonecalendar Changes
 =========================
 
 
-p4a.calendar 1.0beta1 (unreleased)
-==================================
+p4a.plonecalendar 1.0alpha2 (2007-01-14)
+========================================
 
 Bugfixes
 --------
@@ -24,7 +24,7 @@ Features
 * Added support for add links (Lennart Regebro)
 
 
-p4a.calendar 1.0alpha1 (2006-10-21)
+p4a.plonecalendar 1.0alpha1 (2006-10-21)
 ===================================
 
 * First release with unrecorded set of functionality (Rocky Burt)
