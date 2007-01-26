@@ -49,8 +49,7 @@ class ATEventProvider(object):
     def all_events(self):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
-        event_brains = catalog(portal_type='Event',
-                               path=path)
+        event_brains = catalog(portal_type='Event', path=path)
         return (interfaces.IEvent(x) for x in event_brains)
     
     def event_creation_link(self, start=None, stop=None):
@@ -129,4 +128,7 @@ class BrainEvent(object):
         if type:
             return cmfutils.cookString(type[0])
         return ''
-        
+    
+    @property
+    def timezone(self):
+        return self.context.start.timezone()
