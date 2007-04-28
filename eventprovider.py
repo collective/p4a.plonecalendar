@@ -73,7 +73,7 @@ class TopicEventProvider(object):
     
     def gather_events(self, start=None, stop=None, **kw):
         kw = _make_zcatalog_query(start, stop, kw)
-        return (interfaces.IEvent(x) for x in self.context.queryCatalog(kw))
+        return (interfaces.IEvent(x) for x in self.context.queryCatalog(**kw))
 
     def all_events(self):
         #query = self.context.buildQuery()
