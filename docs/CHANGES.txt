@@ -2,6 +2,14 @@
 p4a.plonecalendar Changes
 =========================
 
+p4a.plonecalendar 1.0beta1 (2007-04-29)
+=======================================
+
+Bugfixes
+--------
+
+* Various bugfixes
+
 
 p4a.plonecalendar 1.0alpha2 (2007-01-14)
 ========================================
