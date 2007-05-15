@@ -54,14 +54,47 @@ class TopicEventProviderTest(ATEventProviderTest):
         self.eventSetUp()
         self.loginAsPortalOwner()
         self.folder.invokeFactory('Topic', id='calendar-topic')
-        topic = self.folder['calendar-topic']
-        criteria = topic.addCriterion('portal_type', 'ATPortalTypeCriterion')
+        self.topic = self.folder['calendar-topic']
+        criteria = self.topic.addCriterion(
+            'portal_type', 'ATPortalTypeCriterion')
         criteria.value = (u'Event',)
-        self.provider = IEventProvider(topic)
+        self.provider = IEventProvider(self.topic)
 
     def test_createlink(self):
         link = self.provider.event_creation_link()
         self.failUnlessEqual(link, "")
+
+    def test_gather_events(self):
+        # Make sure that restrictions made by the context topic and
+        # our own query don't clash, see
+        # http://plone4artists.org/products/plone4artistscalendar/issues/35
+
+        # First off, we're going to set a date restriction so that
+        # only events in the future are shown:
+        date_crit = self.topic.addCriterion('start', 'ATFriendlyDateCriteria')
+        date_crit.setValue(0)
+        date_crit.setDateRange('+')
+        date_crit.setOperation('more')
+
+        calls = []
+        def my_catalog(request, **kwargs):
+            calls.append(kwargs)
+            return []
+        self.folder.portal_catalog = my_catalog
+        self.folder.portal_catalog.searchResults = my_catalog
+
+        # Now let's make sure that a call to the catalog is done with
+        # the correct set of arguments, and that the criteria defined
+        # in the topic didn't interfere:
+        self.provider.gather_events(start=datetime(1980, 10, 13),
+                                    stop=datetime(1980, 10, 20))
+
+        self.assertEqual(len(calls), 1)
+        # We don't mind the timezone at this point:
+        self.assertEqual(str(calls[0]['start']['query']),
+                         str(DateTime('1980/10/13')))
+        self.assertEqual(str(calls[0]['end']['query']),
+                         str(DateTime('1980/10/20')))
 
 class LocationFilterTest(CalendarTestCase):
 
