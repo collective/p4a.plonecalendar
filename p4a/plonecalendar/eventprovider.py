@@ -73,7 +73,21 @@ class TopicEventProvider(object):
     
     def gather_events(self, start=None, stop=None, **kw):
         kw = _make_zcatalog_query(start, stop, kw)
-        return (interfaces.IEvent(x) for x in self.context.queryCatalog(**kw))
+
+        # This sad hack allows us to overwrite whatever restriction
+        # the topic makes to the date.  Providing the 'start' and
+        # 'date' arguments to the 'queryCatalog' method would
+        # otherwise just overwrite our own date criteria.
+        # See http://plone4artists.org/products/plone4artistscalendar/issues/35
+        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
+        def my_catalog(request, **kwargs):
+            kwargs.update(kw)
+            return catalog(request, **kwargs)
+        self.context.portal_catalog = my_catalog
+        self.context.portal_catalog.searchResults = my_catalog
+        value = (interfaces.IEvent(x) for x in self.context.queryCatalog())
+        del self.context.portal_catalog
+        return value
 
     def all_events(self):
         #query = self.context.buildQuery()
