@@ -129,6 +129,10 @@ class BrainEvent(object):
     @property
     def end(self):
         return DT2dt(self.context.end)
+    
+    @property
+    def location(self):
+        return self.context.location
 
     @property
     def local_url(self):
