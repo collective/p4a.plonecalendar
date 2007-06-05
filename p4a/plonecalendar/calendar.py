@@ -30,7 +30,8 @@ class FolderCalendarConfig(object):
         else:
             if interfaces.ICalendarEnhanced in ifaces:
                 ifaces -= interfaces.ICalendarEnhanced
-            delattr(self.context, 'layout')
+            if getattr(self.context, 'layout', None) is not None:
+                delattr(self.context, 'layout')
         interface.directlyProvides(self.context, ifaces)
 
     calendar_activated = property(__get_calendar_activated,
