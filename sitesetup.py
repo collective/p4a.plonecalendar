@@ -2,8 +2,13 @@ from p4a.calendar import interfaces
 from p4a.plonecalendar import content
 from p4a.common import site
 from p4a.z2utils import indexing
+from p4a.z2utils import utils
 
 from Products.CMFCore import utils as cmfutils 
+
+import logging
+logger = logging.getLogger('p4a.plonecalendar.sitesetup')
+
 
 def setup_portal(portal):
     site.ensure_site(portal)
@@ -38,3 +43,8 @@ def setup_site(site):
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '
                               'include ability to clean up')
+
+def unsetup_portal(portal):
+    count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
+    logger.warn('Removed ICalendarEnhanced interface from %i objects for '
+                'cleanup' % count)
