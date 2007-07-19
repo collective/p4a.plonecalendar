@@ -1,12 +1,14 @@
 from p4a.calendar import interfaces
 from p4a.plonecalendar import content
 from p4a.common import site
+from p4a.z2utils import indexing
 
 from Products.CMFCore import utils as cmfutils 
 
 def setup_portal(portal):
     site.ensure_site(portal)
     setup_site(portal)
+    indexing.ensure_object_provides(portal)
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
     qi.installProducts(['CMFonFive'])
