@@ -25,10 +25,10 @@ def _make_zcatalog_query(start, stop, kw):
         # capital T.
         kw['Title'] = kw['title']
         del kw['title']
-    if start is not None:
-        kw['start']={'query': dt2DT(start), 'range': 'min'}
     if stop is not None:
-        kw['end']={'query': dt2DT(stop), 'range': 'max'}
+        kw['start']={'query': dt2DT(stop), 'range': 'max'} 
+    if start is not None:
+        kw['end']={'query': dt2DT(start), 'range': 'min'} 
     return kw
 
     
