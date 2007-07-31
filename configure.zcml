@@ -41,6 +41,12 @@
   <adapter factory=".eventprovider.TopicEventProvider" />
   <adapter factory=".eventprovider.BrainEvent" />
 
+  <subscriber
+      for="p4a.calendar.interfaces.ICalendarEnhanced
+           zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".update_catalog"
+      />
+
   <include package=".browser" />
 
 </configure>
