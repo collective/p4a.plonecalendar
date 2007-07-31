@@ -9,25 +9,22 @@ Bugfixes
 --------
 
 * Many bug fixes (resulting from Boston 2007 P4A sprint)
-    #40 - Events not displayed in Month View on Windows IE6.
-    Default install would not display events in IE 6.  Rob Baker supplied fix.
 
-    #39 - Timezone issue when exporting to iCal
-    Issue is resolved. It was an old version of DateTime.py that caused the trouble. Replacing the file with the new version (available at zope.org) solved the problem.
+* #40 - Events not displayed in Month View on Windows IE6. Default install would not display events in IE 6.  Rob Baker supplied fix.
 
-    #38 - Time formatting for internationalization.   
-    P4A Calendar now uses the i18n library to convert the hour/minute format to the locale based on the language of the incoming browser request.  This change removed several methods on the Month class that were formally handling this formatting chore.  However, this new code does not have any tests written against it.
+* #39 - Timezone issue when exporting to iCal. Issue is resolved. It was an old version of DateTime.py that caused the trouble. Replacing the file with the new version (available at zope.org) solved the problem.
 
-    #36 - Event starting in the past, ending in the future is not listed
-    The submitter of the original bug supplied a patch. The patch was applied to the code base and tested.      We concluded that the patch solves this issue.
+* #38 - Time formatting for internationalization. P4A Calendar now uses the i18n library to convert the hour/minute format to the locale based on the language of the incoming browser request.  This change removed several methods on the Month class that were formally handling this formatting chore.  However, this new code does not have any tests written against it.
 
-    #35 — KeyError causes month view to crash
+* #36 - Event starting in the past, ending in the future is not listed. The submitter of the original bug supplied a patch. The patch was applied to the code base and tested. We concluded that the patch solves this issue.
 
-    #34 and #37 - Bug deals with a site breakage when the P4A product is removed from the file system.  This occurs after marker interfaces are set on containerish objects.  Rocky Burt concluded that this is a core Zope issue and provided a workaround is to remove all marker interfaces for P4A when uninstalling the product via the QuickInstaller.   Reinstall does not affect the marker interface settings.  The drawback is that if the product is uninstalled all site setting dealing with the calendar will be lost.   But it was considered worse to have a product that breaks a site with its removal from the files system.  The long term solution will have to come from Zope core.
+* #35 — KeyError causes month view to crash
 
-    #30 — Changing folder back to normal causes error.
+* #34 and #37 - Bug deals with a site breakage when the P4A product is removed from the file system.  This occurs after marker interfaces are set on containerish objects.  Rocky Burt concluded that this is a core Zope issue and provided a workaround is to remove all marker interfaces for P4A when uninstalling the product via the QuickInstaller.   Reinstall does not affect the marker interface settings.  The drawback is that if the product is uninstalled all site setting dealing with the calendar will be lost.   But it was considered worse to have a product that breaks a site with its removal from the files system.  The long term solution will have to come from Zope core.
 
-    #28 — Events with future month don't show up
+* #30 — Changing folder back to normal causes error.
+
+* #28 — Events with future month don't show up
 
 
 p4a.plonecalendar 1.0beta1 (2007-04-29)
