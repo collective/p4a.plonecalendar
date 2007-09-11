@@ -37,8 +37,8 @@ def setup_site(site):
 
     sm = site.getSiteManager()
     if not sm.queryUtility(interfaces.ICalendarSupport):
-        sm.registerUtility(interfaces.ICalendarSupport,
-                           content.CalendarSupport('calendar_support'))
+        sm.registerUtility(content.CalendarSupport('calendar_support'),
+            interfaces.ICalendarSupport)
 
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '

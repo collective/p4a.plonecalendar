@@ -1,6 +1,6 @@
 from zope import component
 from zope import interface
-from zope.app.annotation import interfaces as annointerfaces
+from zope.annotation import interfaces as annointerfaces
 from p4a.calendar import interfaces
 
 from Products.ATContentTypes.content import folder
