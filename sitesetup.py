@@ -37,8 +37,10 @@ def setup_site(site):
 
     sm = site.getSiteManager()
     if not sm.queryUtility(interfaces.ICalendarSupport):
-        sm.registerUtility(content.CalendarSupport('calendar_support'),
-            interfaces.ICalendarSupport)
+        # XXX: This will not work in Zope 2.10
+        sm.registerUtility(interfaces.ICalendarSupport,
+                           content.CalendarSupport('calendar_support'),
+                       )
 
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '
