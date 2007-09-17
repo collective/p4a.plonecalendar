@@ -70,7 +70,22 @@ class iCalendarView(object):
         if not self.has_ical_support():
             return "Calendaring product not installed."
         res = urllib2.urlopen(url)
-        ical = StringIO('\n'.join(res.readlines()))
+        text = '\n'.join(res.readlines())
+        # Make sure it really is UTF8, to avoid failure later:
+        try:
+            text.decode('utf8')
+        except UnicodeDecodeError:
+            try:
+                # Maybe it's Latin-1? That's a break of specs, but a common one.
+                text = text.decode('latin1')
+                # Yup, sure is. Re-encode as utf8:
+                text = text.encode('utf8', 'replace')
+            except UnicodeDecodeError:
+                # We have no idea, what this is, so lets just reencode it
+                # as UTF8 and replace everything weird with <?>.
+                text = text.encode('utf8', 'replace').encode('utf8', 'replace')
+                
+        ical = StringIO(text)
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
         return "%s items imported" % len(items)
