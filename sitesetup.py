@@ -9,6 +9,13 @@ from Products.CMFCore import utils as cmfutils
 import logging
 logger = logging.getLogger('p4a.plonecalendar.sitesetup')
 
+try:
+    import five.localsitemanager
+    HAS_FLSM = True
+    logger.info('Using five.localsitemanager')
+except ImportError, err:
+    HAS_FLSM = False
+
 
 def setup_portal(portal):
     site.ensure_site(portal)
@@ -34,13 +41,15 @@ def setup_site(site):
       <CalendarSupport ...>
 
     """
-
     sm = site.getSiteManager()
     if not sm.queryUtility(interfaces.ICalendarSupport):
-        # XXX: This will not work in Zope 2.10
-        sm.registerUtility(interfaces.ICalendarSupport,
-                           content.CalendarSupport('calendar_support'),
-                       )
+        #registerUtility api changed between Zope 2.9 and 2.10
+        if HAS_FLSM:
+            sm.registerUtility(content.CalendarSupport('calendar_support'),
+                               interfaces.ICalendarSupport)
+        else:
+            sm.registerUtility(interfaces.ICalendarSupport,
+                               content.CalendarSupport('calendar_support'))
 
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '
