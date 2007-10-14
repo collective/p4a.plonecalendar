@@ -8,7 +8,7 @@
   <browser:resourceDirectory
       name="p4aplonecalendar"
       directory="browser/resources"
-      permission="p4a.calendar.ViewContent"
+      permission="zope.Public"
       />
         
   <five:implements
