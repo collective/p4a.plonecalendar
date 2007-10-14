@@ -11,6 +11,9 @@ Bugfixes
 * Fixed issue #24 where folders created by uploading ICS files via
   webdav were not becoming calendar enhanced (Rocky Burt)
 
+* Fixed issue #41 where regular users couldn't activate their
+  own folders to be calendars (Rocky Burt)
+
 p4a.plonecalendar 1.0rc1 (2007-07-31)
 =====================================
 
