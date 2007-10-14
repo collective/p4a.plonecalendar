@@ -12,7 +12,11 @@ from Products.PloneTestCase import layer
 
 PloneTestCase.setupPloneSite()
 
-CalendarTestCase = PloneTestCase.PloneTestCase
+class CalendarTestCase(PloneTestCase.PloneTestCase):
+    def afterSetUp(self):
+        zcml.load_config('configure.zcml', p4a.common)
+        zcml.load_config('configure.zcml', p4a.calendar)
+        zcml.load_config('configure.zcml', p4a.plonecalendar)
 
 class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
 
