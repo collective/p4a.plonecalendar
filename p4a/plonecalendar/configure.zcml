@@ -2,6 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:meta="http://namespaces.zope.org/meta">
         
   <browser:resourceDirectory
@@ -45,6 +46,13 @@
       for="p4a.calendar.interfaces.ICalendarEnhanced
            zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".update_catalog"
+      />
+
+  <subscriber
+      zcml:condition="installed Products.Calendaring.zopeevents"
+      for="*
+            Products.Calendaring.zopeevents.IDemarshalledVEventEvent"
+      handler=".vevent_demarshalled"
       />
 
   <include package=".browser" />
