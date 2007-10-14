@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '1.0rc1'
+version = '1.0'
 
 setup(name='p4a.plonecalendar',
       version=version,
@@ -25,7 +25,7 @@ Plone CMS.""",
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+          'p4a.audio==1.0',
       ],
       entry_points="""
       # -*- Entry points: -*-

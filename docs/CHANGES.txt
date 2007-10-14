@@ -2,8 +2,8 @@
 p4a.plonecalendar Changes
 =========================
 
-p4a.calendar (development)
-==========================
+p4a.calendar 1.0 (2007-10-14)
+=============================
 
 Bugfixes
 --------
