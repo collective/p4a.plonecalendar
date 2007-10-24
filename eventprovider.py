@@ -8,6 +8,8 @@ from DateTime import DateTime
 from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
 from Products.ATContentTypes.content import topic
+from Products.CMFCore.utils import getToolByName
+
 
 def dt2DT(dt):
     s = "%04i-%02i-%02i %02i:%02i" % (dt.year, dt.month, dt.day,
@@ -105,6 +107,9 @@ class BrainEvent(object):
     def __init__(self, context):
         self.context = context
         self.event = None
+        catalog = getToolByName(self.context, 'portal_catalog')
+        putils = getToolByName(self.context, 'plone_utils')
+        self.encoding = putils.getSiteEncoding()
         
     def __cmp__(self, other):
         return cmp(self.start, other.start)
@@ -116,11 +121,13 @@ class BrainEvent(object):
     
     @property
     def title(self):
-        return self.context.Title
+        return unicode(self.context.Title,
+                       self.encoding)
 
     @property
     def description(self):
-        return self.context.Description
+        return unicode(self.context.Description,
+                       self.encoding)
     
     @property
     def start(self):
