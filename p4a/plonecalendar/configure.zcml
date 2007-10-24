@@ -1,10 +1,16 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:zcml="http://namespaces.zope.org/zcml"
     xmlns:meta="http://namespaces.zope.org/meta">
-        
+ 
+  <include package="p4a.z2utils" />
+  <include package="p4a.common" />
+  <include package="p4a.fileimage" />
+  <include package="p4a.calendar" />
+
   <browser:resourceDirectory
       name="p4aplonecalendar"
       directory="browser/resources"
@@ -56,5 +62,14 @@
       />
 
   <include package=".browser" />
+
+  <!-- Generic Setup Profile -->
+  <genericsetup:registerProfile
+      name="default"
+      title="P4A Calendar"
+      directory="profiles/default"
+      description="A calendar for plone"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
 
 </configure>
