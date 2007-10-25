@@ -8,7 +8,6 @@
  
   <include package="p4a.z2utils" />
   <include package="p4a.common" />
-  <include package="p4a.fileimage" />
   <include package="p4a.calendar" />
 
   <browser:resourceDirectory
@@ -32,18 +31,7 @@
       interface="p4a.calendar.interfaces.IPossibleCalendar"
       />
 
-  <five:traversable
-      class="Products.ATContentTypes.content.folder.ATBTreeFolder"
-      />
-  <five:traversable
-      class="Products.ATContentTypes.content.folder.ATFolder"
-      />
-  <five:traversable
-      class="Products.ATContentTypes.content.topic.ATTopic"
-      />
-
   <adapter factory=".calendar.FolderCalendarConfig" />
-
   <adapter factory=".eventprovider.ATEventProvider" />
   <adapter factory=".eventprovider.TopicEventProvider" />
   <adapter factory=".eventprovider.BrainEvent" />
