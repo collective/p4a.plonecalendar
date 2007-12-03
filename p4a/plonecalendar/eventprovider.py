@@ -2,8 +2,9 @@ import datetime
 from zope import interface
 from zope import component
 
+import kalends
 from Products.ZCatalog import CatalogBrains
-from p4a.calendar import interfaces
+from Products.chronos import interfaces
 from DateTime import DateTime
 from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
@@ -35,33 +36,74 @@ def _make_zcatalog_query(start, stop, kw):
 
     
 class ATEventProvider(object):
-    interface.implements(interfaces.IEventProvider)
+    interface.implements(kalends.IEventProvider)
     component.adapts(atapi.BaseObject)
 
     def __init__(self, context):
         self.context = context
         
-    def gather_events(self, start=None, stop=None, **kw):
+    #def gather_events(self, start=None, stop=None, **kw):
+        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
+        #path = '/'.join(self.context.getPhysicalPath())
+        #kw = _make_zcatalog_query(start, stop, kw)
+        #event_brains = catalog(portal_type='Event', path=path, **kw)
+        #return (interfaces.IEvent(x) for x in event_brains)
+    
+    #def all_events(self):
+        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
+        #path = '/'.join(self.context.getPhysicalPath())
+        #event_brains = catalog(portal_type='Event', path=path)
+        #return (interfaces.IEvent(x) for x in event_brains)
+    
+    #def event_creation_link(self, start=None, stop=None):
+        #if self.context.portal_membership.checkPermission(
+            #'Add portal content',self.context):
+            #return self.context.absolute_url() + '/createObject?type_name=Event'
+        #return ''
+
+    def getEvents(self, start=None, stop=None, **kw):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         path = '/'.join(self.context.getPhysicalPath())
         kw = _make_zcatalog_query(start, stop, kw)
-        event_brains = catalog(portal_type='Event', path=path, **kw)
-        return (interfaces.IEvent(x) for x in event_brains)
-    
-    def all_events(self):
-        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        path = '/'.join(self.context.getPhysicalPath())
-        event_brains = catalog(portal_type='Event', path=path)
-        return (interfaces.IEvent(x) for x in event_brains)
-    
-    def event_creation_link(self, start=None, stop=None):
-        if self.context.portal_membership.checkPermission(
-            'Add portal content',self.context):
-            return self.context.absolute_url() + '/createObject?type_name=Event'
-        return ''
+        tool = cmfutils.getToolByName(self.context, 'portal_calendar')
+        portal_types = tool.getCalendarTypes()
+        # Any first occurrences:
+        event_brains = catalog(portal_type=portal_types, path=path, **kw)
+        # And then the recurrences:
+        if stop is None:
+            # XXX This is to handle the recurring events in the list view.
+            # It should possibly be done some other way, since it will recur to
+            # the year 2020 as it is now.
+            stop = start + datetime.timedelta(30)
+        if start is None:
+            # XXX This is to handle the recurring events in the past events view.
+            # This could also likely be improved.
+            start = datetime.datetime(1970, 1, 1, 0, 0)
+        days = range(start.toordinal(), 
+                    (stop + datetime.timedelta(hours=23, minutes=59)).toordinal())
+        # XXX How do we make the recurrence story pluggable?
+        # This didn't work, because if RecurringEvent is not installed all fails:
+        # Maybe we don't need pluggability, we could just require p4a.ploneevent,
+        # But at least it should work without it....
+        #recurrences = catalog(portal_type=portal_types, 
+                              #path=path, 
+                              #getRecueDays=days)
+        recurrences = []
+        return tuple((kalends.ITimezonedOccurrence(x) for x in event_brains)) + \
+               tuple((kalends.ITimezonedRecurringEvent(x) for x in recurrences))
+
+    def getOccurrences(self, start=None, stop=None, **kw):
+        events = self.getEvents(start, stop, **kw)
+        res = []
+        for event in events:
+            if kalends.IRecurring.providedBy(event):
+                res.extend(event.getOcurrences(start, stop))
+            else:
+                res.append(event)
+        return res    
 
 class TopicEventProvider(object):
-    interface.implements(interfaces.IEventProvider)
+    interface.implements(kalends.IEventProvider)
     component.adapts(topic.ATTopic)
 
     def __init__(self, context):
@@ -101,7 +143,7 @@ class TopicEventProvider(object):
 
 
 class BrainEvent(object):
-    interface.implements(interfaces.IEvent)
+    interface.implements(kalends.ITimezonedOccurrence)
     component.adapts(CatalogBrains.AbstractCatalogBrain)
 
     def __init__(self, context):
@@ -142,7 +184,7 @@ class BrainEvent(object):
         return self.context.location
 
     @property
-    def local_url(self):
+    def url(self):
         return self.context.getURL()
 
     @property
@@ -157,3 +199,18 @@ class BrainEvent(object):
     @property
     def timezone(self):
         return self.context.start.timezone()
+
+class RecurringBrainEvent(BrainEvent):
+    
+    interface.implements(kalends.ITimezonedRecurringEvent)
+
+    def getOcurrences(self, start, stop):
+        event = self._getEvent()
+        res = []
+        for each in event.calc_recueDays(start, stop):
+            dt = datetime.date.fromordinal(each)
+            res.append(Ocurrence(self.context, dt))
+            
+        return res
+            
+        
