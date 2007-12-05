@@ -2,7 +2,7 @@ import urllib2
 from StringIO import StringIO
 from zope import interface
 from Products.CMFCore.utils import getToolByName
-from kalends import IEventProvider
+from dateable.kalends import IEventProvider
 
 class IiCalendarView(interface.Interface):
     def has_ical_support():

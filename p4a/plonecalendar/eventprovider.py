@@ -2,7 +2,7 @@ import datetime
 from zope import interface
 from zope import component
 
-import kalends
+from dateable import kalends
 from Products.ZCatalog import CatalogBrains
 from Products.chronos import interfaces
 from DateTime import DateTime

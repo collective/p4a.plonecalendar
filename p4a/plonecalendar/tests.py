@@ -6,7 +6,7 @@ import Products.chronos
 import p4a.plonecalendar
 from Products.chronos.tests import EventProviderTestMixin
 from Products.chronos.interfaces import ICalendarConfig
-from kalends import IEventProvider
+from dateable.kalends import IEventProvider
 from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
