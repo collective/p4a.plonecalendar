@@ -2,7 +2,7 @@ Calendar
 ========
 
 This file describes the nature of the integration of calendar functionality
-as exposed by Products.chronos on the Plone platform.
+as exposed by dateable.chronos on the Plone platform.
 
 We start out by building up a folder with some events.
 
@@ -19,7 +19,7 @@ We start out by building up a folder with some events.
 Now we go ahead and activate calendaring capabilities on this new
 folder.
 
-  >>> from Products.chronos.interfaces import ICalendarConfig
+  >>> from dateable.chronos.interfaces import ICalendarConfig
   >>> config = ICalendarConfig(calendarfolder)
   >>> config.calendar_activated
   False

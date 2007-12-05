@@ -5,7 +5,7 @@
       
   <menuItem
       menu="object_buttons"
-      for="Products.chronos.interfaces.IPossibleCalendar"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       title="Configure Calendar"
       action="${object_url}/calendar-config.html"
       filter="object/@@p4acalsupport/support_enabled"
@@ -14,7 +14,7 @@
 
   <page
       name="icalendar.ics"
-      for="Products.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.ICalendarEnhanced"
       permission="zope2.View"
       class=".icalendar.iCalendarView"
       template="icalendar.pt"
@@ -26,12 +26,12 @@
       for="*"
       class=".support.Support"
       permission="zope.Public"
-      allowed_interface="Products.chronos.interfaces.IBasicCalendarSupport"
+      allowed_interface="dateable.chronos.interfaces.IBasicCalendarSupport"
       />
   
   <page
       name="import_from_url"
-      for="Products.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.ICalendarEnhanced"
       permission="cmf.ModifyPortalContent"
       class=".icalendar.iCalendarView"
       attribute="import_from_url"
@@ -39,7 +39,7 @@
 
   <page
       name="import_from_hcal"
-      for="Products.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.ICalendarEnhanced"
       permission="cmf.ModifyPortalContent"
       class=".icalendar.iCalendarView"
       attribute="import_from_hcal"
@@ -47,7 +47,7 @@
 
   <page
       name="import.html"
-      for="Products.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.ICalendarEnhanced"
       permission="zope2.View"
       class=".icalendar.iCalendarView"
       template="icalendar_import.pt"

@@ -1,4 +1,4 @@
-from Products.chronos import interfaces
+from dateable.chronos import interfaces
 from p4a.plonecalendar import calendar
 from Acquisition import aq_inner, aq_parent
 

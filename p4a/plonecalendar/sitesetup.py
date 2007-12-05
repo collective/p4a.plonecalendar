@@ -1,4 +1,4 @@
-from Products.chronos import interfaces
+from dateable.chronos import interfaces
 from p4a.plonecalendar import content
 from p4a.common import site
 from p4a.z2utils import indexing
@@ -29,7 +29,7 @@ def setup_site(site):
     """Install all necessary components and configuration into the
     given site.
 
-      >>> from Products.chronos import interfaces
+      >>> from dateable.chronos import interfaces
       >>> from p4a.common.testing import MockSite
 
       >>> site = MockSite()

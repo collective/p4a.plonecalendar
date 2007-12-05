@@ -2,10 +2,10 @@ from datetime import datetime
 from DateTime import DateTime
 from Testing import ZopeTestCase
 import p4a.common
-import Products.chronos
+import dateable.chronos
 import p4a.plonecalendar
-from Products.chronos.tests import EventProviderTestMixin
-from Products.chronos.interfaces import ICalendarConfig
+from dateable.chronos.tests import EventProviderTestMixin
+from dateable.chronos.interfaces import ICalendarConfig
 from dateable.kalends import IEventProvider
 from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase
@@ -16,7 +16,7 @@ PloneTestCase.setupPloneSite()
 class CalendarTestCase(PloneTestCase.PloneTestCase):
     def afterSetUp(self):
         zcml.load_config('configure.zcml', p4a.common)
-        zcml.load_config('configure.zcml', Products.chronos)
+        zcml.load_config('configure.zcml', dateable.chronos)
         zcml.load_config('configure.zcml', p4a.plonecalendar)
 
 class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):

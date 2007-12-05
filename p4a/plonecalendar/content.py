@@ -1,5 +1,5 @@
 from zope import interface
-from Products.chronos import interfaces
+from dateable.chronos import interfaces
 from OFS.SimpleItem import SimpleItem
 
 class CalendarSupport(SimpleItem):

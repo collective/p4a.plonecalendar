@@ -1,7 +1,7 @@
 from zope import component
 from zope import interface
 from zope.app.annotation import interfaces as annointerfaces
-from Products.chronos import interfaces
+from dateable.chronos import interfaces
 
 from Products.ATContentTypes.content import folder
 

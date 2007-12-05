@@ -4,7 +4,7 @@ from zope import component
 
 from dateable import kalends
 from Products.ZCatalog import CatalogBrains
-from Products.chronos import interfaces
+from dateable.chronos import interfaces
 from DateTime import DateTime
 from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
