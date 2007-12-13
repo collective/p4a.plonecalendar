@@ -44,6 +44,6 @@ we created earlier.
   1
   >>> event = day.events[0]
   >>> event['title']
-  'First Event'
+  u'First Event'
   >>> event['timespan']
   u'08:30 to 09:30 GMT+2'
