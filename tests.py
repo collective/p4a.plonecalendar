@@ -9,6 +9,7 @@ from p4a.calendar.interfaces import ICalendarConfig, IEventProvider
 from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
+from Products.ZCatalog.Lazy import LazyCat
 
 PloneTestCase.setupPloneSite()
 
@@ -83,7 +84,7 @@ class TopicEventProviderTest(ATEventProviderTest):
         calls = []
         def my_catalog(request, **kwargs):
             calls.append(kwargs)
-            return []
+            return LazyCat([])
         self.folder.portal_catalog = my_catalog
         self.folder.portal_catalog.searchResults = my_catalog
 
@@ -95,9 +96,9 @@ class TopicEventProviderTest(ATEventProviderTest):
 
         self.assertEqual(len(calls), 1)
         # We don't mind the timezone at this point:
-        self.assertEqual(str(calls[0]['start']['query']),
-                         str(DateTime('1980/10/13')))
         self.assertEqual(str(calls[0]['end']['query']),
+                         str(DateTime('1980/10/13')))
+        self.assertEqual(str(calls[0]['start']['query']),
                          str(DateTime('1980/10/20')))
 
 class LocationFilterTest(CalendarTestCase):
