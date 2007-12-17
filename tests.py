@@ -124,7 +124,6 @@ def test_suite():
     from unittest import TestSuite, makeSuite
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
     from zope.testing import doctest
-    from zope.component import testing
     
     suite = TestSuite()
     suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.utils',
