@@ -15,7 +15,7 @@ Calendar utilities
 """
 
 import os
-import datetime, time
+import datetime
 from DateTime import DateTime
 import pytz
 try:

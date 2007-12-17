@@ -1,5 +1,4 @@
 from p4a.calendar import interfaces
-from p4a.plonecalendar import calendar
 from Acquisition import aq_inner, aq_parent
 
 def update_catalog(obj, evt):
