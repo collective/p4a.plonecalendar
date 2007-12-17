@@ -127,14 +127,13 @@ def test_suite():
     from zope.component import testing
     
     suite = TestSuite()
+    suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.utils',
+                                       optionflags=doctest.ELLIPSIS))
     suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.sitesetup',
                                        optionflags=doctest.ELLIPSIS))
-    suite.addTest(ZopeDocFileSuite(
-        'calendar.txt',
-        package='p4a.plonecalendar',
-        test_class=CalendarTestCase,
-        )
-    )
+    suite.addTest(ZopeDocFileSuite('calendar.txt',
+                                   package='p4a.plonecalendar',
+                                   test_class=CalendarTestCase,))
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
     suite.addTests(makeSuite(LocationFilterTest))
