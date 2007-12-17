@@ -15,6 +15,7 @@ Calendar utilities
 """
 
 import os
+import time
 import datetime
 from DateTime import DateTime
 import pytz
@@ -29,20 +30,11 @@ def gettz(name):
     except KeyError:
         return pytz_support._numeric_timezones[name]
 
-def GMT4dt(date):
-    if not isinstance(date, datetime.datetime):
-        return 'UTC'
-    offset = date.utcoffset()
-    minutes = (offset.days*24*60)+(offset.seconds/60)
-    if minutes == 0:
-        return 'UTC'
-    return 'GMT%+03i%02i' % divmod(minutes,60)
-
 def dt2DT(dt, tzname=None):
     """Convert a python datetime to DateTime. 
 
-    >>> import os
-    >>> os.environ['TZ'] = 'Brazil/East'
+    >>> import time
+    >>> time.tzname = ('Brazil/East', 'Brazil/East')
     >>> brt = gettz('Brazil/East')
 
     No timezone information, assume local timezone at the time.
@@ -75,10 +67,18 @@ def dt2DT(dt, tzname=None):
     """
     if tzname is None and dt.tzinfo is None:
         # Assume local time
-        tzname = os.environ['TZ']    
-    if tzname is not None:
+        # XXX the import is done here, so that unit tests have a chance to
+        # override the local timezone, buy doing 
+        #   import time; time.tzname = ('CET', 'CEST')
+        # or similar.
+        from time import tzname
+        tz = gettz(tzname[0])
+    elif tzname is not None:
         # Convert to timezone
         tz = gettz(tzname)
+    else:
+        tz = None
+    if tz is not None:
         dt = tz.localize(dt)
     return DateTime(dt.isoformat())
 
