@@ -45,5 +45,8 @@ we created earlier.
   >>> event = day.events[0]
   >>> event['title']
   u'First Event'
+  
+XXX I suspect this test depends on your local timezone. I need to test that:
+
   >>> event['timespan']
-  u'08:30 to 09:30 GMT+2'
+  u'08:30 to 09:30 GMT+1'

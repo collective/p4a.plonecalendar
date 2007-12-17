@@ -1,24 +1,13 @@
-import datetime
 from zope import interface
 from zope import component
 
 from Products.ZCatalog import CatalogBrains
 from p4a.calendar import interfaces
-from DateTime import DateTime
 from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
 from Products.ATContentTypes.content import topic
 from Products.CMFCore.utils import getToolByName
-
-
-def dt2DT(dt):
-    s = "%04i-%02i-%02i %02i:%02i" % (dt.year, dt.month, dt.day,
-                                      dt.hour, dt.minute)
-    return DateTime(s)
-
-def DT2dt(dt):
-    return datetime.datetime(dt.year(), dt.month(), dt.day(),
-                             dt.hour(), dt.minute())
+from utils import dt2DT, DT2dt
 
 def _make_zcatalog_query(start, stop, kw):
     """Takes a IEventProvider query and makes it a ZCaralog query"""
