@@ -1,15 +1,3 @@
-##############################################################################
-#
-# Copyright (c) 2007 Zope Corporation and Contributors. All Rights Reserved.
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE
-#
-##############################################################################
 """
 Calendar utilities
 
@@ -27,79 +15,14 @@ Doublecheck conversions:
 
 """
 
-import os
-import time
 import datetime
 from DateTime import DateTime
-import Products.Calendaring
-import dateutil
-
-def _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
-    return (tz._tzinfos.has_key((tzoffset, datetime.timedelta(0), tzname)) and
-            tz._tzinfos.has_key((altoffset, altoffset-tzoffset, altname)))
-
-def _guess_local_time_zone(tzoffset, altoffset, tzname, altname):
-    # This tries to guess local timezones based on what your local standard
-    # and daylight offsets are, and what they are called. It *will* guess
-    # incorrectly most of the time. For example, For the timezone Brazil/East,
-    # all python knows is that you are in BTR/BRST and that this is GMT-3 and
-    # GMT-2 respectively, and if DST is currently in effect or not. This
-    # matches many different timezones, and this method will just return the
-    # first one, which will be America/Sao_Paulo when DST is in effect and
-    # America/Araguaina otherwise. This is problematic, because
-    # America/Araguaina does not employ daylightsaving, so any time
-    # localizations for DST-times WILL be incorrect.
-    
-    # Look through all timezones to find a match:
-    now = datetime.datetime.now()
-    for each in pytz.all_timezones:
-        tz = gettz(each)
-        if not hasattr(tz, '_tzinfos'):
-            # This can't match
-            continue
-        if _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
-            # Check that DST is on or off:
-            dst_should_be = time.daylight and altoffset-tzoffset or datetime.timedelta(0)
-            if tz.localize(now).dst() == dst_should_be:
-                return tz
-        
-    raise KeyError("Can't find a local timezone")
-
-def local_time_zone():
-    # XXX This is as of yet untested on windows. /regebro
-    # First check if a TZ environment variable is set that points to a 
-    # proper timezone:
-    try:
-        tzstr = os.environ['TZ']
-        return gettz(tzstr)
-    except KeyError:
-        pass
-
-    return dateutil.tz.gettz()
-        
-    ## That didn't work. Find the locale timezone info:
-    #tzoffset = datetime.timedelta(seconds=-time.timezone)
-    #altoffset = datetime.timedelta(seconds=-time.altzone)
-    #tzname = time.tzname[0]
-    #altname = time.tzname[1]
-
-    ## See if there is a timezone with the timezone name given.
-    #try:
-        #if time.daylight:
-            #tz = gettz(altname)
-        #else:
-            #tz = gettz(tzname)
-        #if not hasattr(tz, '_tzinfos'):
-            ## Some timezones have no tzinfos. If this returns one of them,
-            ## it can be assumed to be a correct match
-            #return tz
-        #elif _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
-            #return tz
-    #except KeyError:
-        #pass
-    
-    ## No, not that either. Then we need to use the local info to make a guess:
-    #return _guess_local_time_zone(tzoffset, altoffset, tzname, altname)
+try:
+    import dateutil
+except ImportError:
+    # To make Calendaring patch in dateutils:
+    import Products.Calendaring
+    import dateutil
 
 def gettz(name=None):
     try:
@@ -203,4 +126,3 @@ for x in range(-12, 0) + range(1, 13):
         name = '%s%+i' % (n, x)
         tz = dateutil.tz.tzoffset(name, x*3600)
         _extra_times[name] = tz
-        
