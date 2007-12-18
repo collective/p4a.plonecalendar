@@ -15,14 +15,13 @@ Calendar utilities
 
 Doublecheck conversions:
 
-    >>> brt = pytz.timezone('Brazil/East')
+    >>> brt = gettz('Brazil/East')
 
     >>> dt = DateTime('2005/07/07 18:00:00 Brazil/East')
     >>> dt == dt2DT(DT2dt(dt))
     True
 
-    >>> dt = datetime.datetime(2005, 07, 07, 18, 00, 00)
-    >>> dt = brt.localize(dt)
+    >>> dt = datetime.datetime(2005, 07, 07, 18, 00, 00, tzinfo=tz)
     >>> dt == DT2dt(dt2DT(dt))
     True
 
@@ -32,11 +31,8 @@ import os
 import time
 import datetime
 from DateTime import DateTime
-import pytz
-try:
-    from DateTime import pytz_support
-except ImportError:
-    import pytz_support
+import Products.Calendaring
+import dateutil
 
 def _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
     return (tz._tzinfos.has_key((tzoffset, datetime.timedelta(0), tzname)) and
@@ -57,7 +53,7 @@ def _guess_local_time_zone(tzoffset, altoffset, tzname, altname):
     # Look through all timezones to find a match:
     now = datetime.datetime.now()
     for each in pytz.all_timezones:
-        tz = pytz.timezone(each)
+        tz = gettz(each)
         if not hasattr(tz, '_tzinfos'):
             # This can't match
             continue
@@ -75,39 +71,41 @@ def local_time_zone():
     # proper timezone:
     try:
         tzstr = os.environ['TZ']
-        return pytz.timezone(tzstr)
+        return gettz(tzstr)
     except KeyError:
         pass
 
-    # That didn't work. Find the locale timezone info:
-    tzoffset = datetime.timedelta(seconds=-time.timezone)
-    altoffset = datetime.timedelta(seconds=-time.altzone)
-    tzname = time.tzname[0]
-    altname = time.tzname[1]
+    return dateutil.tz.gettz()
+        
+    ## That didn't work. Find the locale timezone info:
+    #tzoffset = datetime.timedelta(seconds=-time.timezone)
+    #altoffset = datetime.timedelta(seconds=-time.altzone)
+    #tzname = time.tzname[0]
+    #altname = time.tzname[1]
 
-    # See if there is a timezone with the timezone name given.
-    try:
-        if time.daylight:
-            tz = pytz.timezone(altname)
-        else:
-            tz = pytz.timezone(tzname)
-        if not hasattr(tz, '_tzinfos'):
-            # Some timezones have no tzinfos. If this returns one of them,
-            # it can be assumed to be a correct match
-            return tz
-        elif _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
-            return tz
-    except KeyError:
-        pass
+    ## See if there is a timezone with the timezone name given.
+    #try:
+        #if time.daylight:
+            #tz = gettz(altname)
+        #else:
+            #tz = gettz(tzname)
+        #if not hasattr(tz, '_tzinfos'):
+            ## Some timezones have no tzinfos. If this returns one of them,
+            ## it can be assumed to be a correct match
+            #return tz
+        #elif _timezone_matches(tz, tzoffset, altoffset, tzname, altname):
+            #return tz
+    #except KeyError:
+        #pass
     
-    # No, not that either. Then we need to use the local info to make a guess:
-    return _guess_local_time_zone(tzoffset, altoffset, tzname, altname)
+    ## No, not that either. Then we need to use the local info to make a guess:
+    #return _guess_local_time_zone(tzoffset, altoffset, tzname, altname)
 
-def gettz(name):
+def gettz(name=None):
     try:
-        return pytz.timezone(name)
+        return _extra_times[name]
     except KeyError:
-        return pytz_support._numeric_timezones[name]
+        return dateutil.tz.gettz(name)
 
 def dt2DT(dt, tzname=None):
     """Convert a python datetime to DateTime. 
@@ -130,19 +128,17 @@ def dt2DT(dt, tzname=None):
 
     UTC timezone.
 
-    >>> dt2DT(datetime.datetime(2005, 11, 07, 18, 0, 0, tzinfo=pytz.utc))
+    >>> dt2DT(datetime.datetime(2005, 11, 07, 18, 0, 0, tzinfo=gettz('UTC')))
     DateTime('2005/11/07 18:00:00 GMT+0')
 
     BRST timezone (GMT-2 on this day).
 
-    >>> dt = datetime.datetime(2005, 11, 07, 18, 0, 0)
-    >>> dt2DT(brt.localize(dt))
+    >>> dt2DT(datetime.datetime(2005, 11, 07, 18, 0, 0, tzinfo=brt))
     DateTime('2005/11/07 18:00:00 GMT-2')
 
     BRT timezone (GMT-3 on this day).
 
-    >>> dt = datetime.datetime(2005, 07, 07, 18, 0, 0)
-    >>> dt2DT(brt.localize(dt))
+    >>> dt2DT(datetime.datetime(2005, 07, 07, 18, 0, 0, tzinfo=brt))
     DateTime('2005/07/07 18:00:00 GMT-3')
     
     Change back:
@@ -152,17 +148,14 @@ def dt2DT(dt, tzname=None):
     """
     if tzname is None and dt.tzinfo is None:
         # Assume local time
-        # XXX turns out this method has a problem in some parts of Australia
-        # As their timezone evidently is called EST, and this gets confused 
-        # with the US EST.
-        tz = local_time_zone()
+        tz = gettz()
     elif tzname is not None:
         # Convert to timezone
         tz = gettz(tzname)
     else:
         tz = None
     if tz is not None:
-        dt = tz.localize(dt)
+        dt = dt.replace(tzinfo=tz)
     return DateTime(dt.isoformat())
 
 def DT2dt(dt):
@@ -170,37 +163,44 @@ def DT2dt(dt):
 
     >>> dt = DT2dt(DateTime('2005/11/07 18:00:00 UTC'))
     >>> dt
-    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=<StaticTzInfo 'Universal'>)
-    >>> dt.astimezone(pytz.utc)
-    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=<UTC>)
+    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=tzfile('/usr/share/zoneinfo/Universal'))
+    >>> dt.astimezone(gettz('UTC'))
+    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=tzfile('/usr/share/zoneinfo/UTC'))
 
     >>> dt = DT2dt(DateTime('2005/11/07 18:00:00 Brazil/East'))
     >>> dt
-    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=<DstTzInfo 'Brazil/East' BRST-1 day, 22:00:00 DST>)
-    >>> dt.astimezone(pytz.utc)
-    datetime.datetime(2005, 11, 7, 20, 0, tzinfo=<UTC>)
+    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=tzfile('/usr/share/zoneinfo/Brazil/East'))
+    >>> dt.astimezone(gettz('UTC'))
+    datetime.datetime(2005, 11, 7, 20, 0, tzinfo=tzfile('/usr/share/zoneinfo/UTC'))
 
     >>> dt = DT2dt(DateTime('2005/11/07 18:00:00 GMT-2'))
     >>> dt
-    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=<StaticTzInfo 'GMT-2'>)
-    >>> dt.astimezone(pytz.utc)
-    datetime.datetime(2005, 11, 7, 20, 0, tzinfo=<UTC>)
+    datetime.datetime(2005, 11, 7, 18, 0, tzinfo=tzoffset('GMT-2', -7200))
+    >>> dt.astimezone(gettz('UTC'))
+    datetime.datetime(2005, 11, 7, 20, 0, tzinfo=tzfile('/usr/share/zoneinfo/UTC'))
 
     >>> dt = DT2dt(DateTime('2005/07/07 18:00:00 Brazil/East'))
     >>> dt
-    datetime.datetime(2005, 7, 7, 18, 0, tzinfo=<DstTzInfo 'Brazil/East' BRT-1 day, 21:00:00 STD>)
-    >>> dt.astimezone(pytz.utc)
-    datetime.datetime(2005, 7, 7, 21, 0, tzinfo=<UTC>)
+    datetime.datetime(2005, 7, 7, 18, 0, tzinfo=tzfile('/usr/share/zoneinfo/Brazil/East'))
+    >>> dt.astimezone(gettz('UTC'))
+    datetime.datetime(2005, 7, 7, 21, 0, tzinfo=tzfile('/usr/share/zoneinfo/UTC'))
 
     >>> dt = DT2dt(DateTime('2005/07/07 18:00:00 GMT-3'))
     >>> dt
-    datetime.datetime(2005, 7, 7, 18, 0, tzinfo=<StaticTzInfo 'GMT-3'>)
-    >>> dt.astimezone(pytz.utc)
-    datetime.datetime(2005, 7, 7, 21, 0, tzinfo=<UTC>)
+    datetime.datetime(2005, 7, 7, 18, 0, tzinfo=tzoffset('GMT-3', -10800))
+    >>> dt.astimezone(gettz('UTC'))
+    datetime.datetime(2005, 7, 7, 21, 0, tzinfo=tzfile('/usr/share/zoneinfo/UTC'))
     """
     tz = gettz(dt.timezone())
     value = datetime.datetime(dt.year(), dt.month(), dt.day(),
                               dt.hour(), dt.minute(), int(dt.second()),
-                              int(dt.second()*1000000) % 1000000)
-    value = tz.localize(value)
+                              int(dt.second()*1000000) % 1000000, tzinfo=tz)
     return value
+
+_extra_times = {}
+for x in range(-12, 0) + range(1, 13):
+    for n in ('GMT', 'UTC'):
+        name = '%s%+i' % (n, x)
+        tz = dateutil.tz.tzoffset(name, x*3600)
+        _extra_times[name] = tz
+        
