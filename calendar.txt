@@ -13,8 +13,8 @@ We start out by building up a folder with some events.
   >>> calendarfolder = folder['calendar-folder']
   >>> id = calendarfolder.invokeFactory('Event', id='event1')
   >>> calendarfolder['event1'].update(title='First Event',
-  ...                                 startDate=DateTime('2006-09-28 08:30am'),
-  ...                                 endDate=DateTime('2006-09-28 09:30am'))
+  ...                                 startDate=DateTime('2006-09-28 08:30am CEST'),
+  ...                                 endDate=DateTime('2006-09-28 09:30am CEST'))
 
 Now we go ahead and activate calendaring capabilities on this new
 folder.
@@ -50,3 +50,4 @@ XXX I suspect this test depends on your local timezone. I need to test that:
 
   >>> event['timespan']
   u'08:30 to 09:30 GMT+2'
+
