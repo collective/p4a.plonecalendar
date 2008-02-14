@@ -2,8 +2,24 @@
 p4a.plonecalendar Changes
 =========================
 
-p4a.calendar 1.0 (2007-10-14)
-=============================
+p4a.plonecalendar 1.1 (2008-02-14)
+==================================
+
+New features
+------------
+
+* Plone 3 support.
+
+* Now uses p4a.subtyper.
+
+Bugfixes
+--------
+
+* Various timezone fixes, and some minor fixes.
+
+
+p4a.plonecalendar 1.0 (2007-10-14)
+==================================
 
 Bugfixes
 --------
