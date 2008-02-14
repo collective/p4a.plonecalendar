@@ -3,7 +3,7 @@ from p4a.plonecalendar import content
 from p4a.common import site
 from p4a.z2utils import indexing
 from p4a.z2utils import utils
-
+from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
 from Products.CMFCore import utils as cmfutils 
 
 import logging
@@ -24,6 +24,8 @@ def setup_portal(portal):
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
     qi.installProducts(['CMFonFive'])
+    
+    subtyper_setup(portal)
 
 def setup_site(site):
     """Install all necessary components and configuration into the
@@ -49,7 +51,7 @@ def setup_site(site):
                                interfaces.ICalendarSupport)
         else:
             sm.registerUtility(interfaces.ICalendarSupport,
-                               content.CalendarSupport('calendar_support'))
+                               content.CalendarSupport('calendar_support'))            
 
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '

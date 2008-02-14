@@ -69,5 +69,21 @@
       description="A calendar for plone"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+      
+  <!-- Plone 2.5 support -->
+  <configure zcml:condition="installed zope.app.annotation.tests">
+  
+    <five:implements
+      class="Products.ATContentTypes.content.folder.ATFolder"
+      interface="zope.app.annotation.IAttributeAnnotatable"
+      />
+
+    <five:implements
+      class="Products.ATContentTypes.content.folder.ATBTreeFolder"
+      interface="zope.app.annotation.IAttributeAnnotatable"
+      />
+
+  </configure>
+      
 
 </configure>
