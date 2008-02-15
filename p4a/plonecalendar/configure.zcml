@@ -51,6 +51,16 @@
 
   <include package=".browser" />
 
+  <!-- Subtyping -->
+  
+  <utility
+      name="p4a.plonecalendar.FolderCalendar"
+      factory=".subtype.FolderCalendarDescriptor" />
+
+  <utility
+      name="p4a.plonecalendar.TopicCalendar"
+      factory=".subtype.TopicCalendarDescriptor" />
+ 
   <!-- Generic Setup Profile -->
   <genericsetup:registerProfile
       name="default"

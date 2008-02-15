@@ -3,8 +3,6 @@ from zope import interface
 from zope.app.annotation import interfaces as annointerfaces
 from dateable.chronos import interfaces
 
-from Products.ATContentTypes.content import folder
-
 class FolderCalendarConfig(object):
     """An ICalendarConfig adapter for ATCT folder content.
     """
