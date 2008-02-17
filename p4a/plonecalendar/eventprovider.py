@@ -9,7 +9,7 @@ from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
 from Products.ATContentTypes.content import topic
 from Products.CMFCore.utils import getToolByName
-from utils import dt2DT, DT2dt
+from p4a.common.dtutils import dt2DT, DT2dt
 
 def _make_zcatalog_query(start, stop, kw):
     """Takes a IEventProvider query and makes it a ZCaralog query"""
@@ -18,47 +18,26 @@ def _make_zcatalog_query(start, stop, kw):
         # capital T.
         kw['Title'] = kw['title']
         del kw['title']
+    # Note how we assign the stop to the start and the start to the end
+    # This is confusing, but correct. We want everything that that has a 
+    # start date before the stop time OR an end date after the start time.
     if stop is not None:
         kw['start']={'query': dt2DT(stop), 'range': 'max'} 
     if start is not None:
         kw['end']={'query': dt2DT(start), 'range': 'min'} 
     return kw
-
     
-class ATEventProvider(object):
-    interface.implements(kalends.IEventProvider)
-    component.adapts(atapi.BaseObject)
-
+class EventProviderBase(object):
+    
     def __init__(self, context):
         self.context = context
         
-    #def gather_events(self, start=None, stop=None, **kw):
-        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        #path = '/'.join(self.context.getPhysicalPath())
-        #kw = _make_zcatalog_query(start, stop, kw)
-        #event_brains = catalog(portal_type='Event', path=path, **kw)
-        #return (interfaces.IEvent(x) for x in event_brains)
-    
-    #def all_events(self):
-        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        #path = '/'.join(self.context.getPhysicalPath())
-        #event_brains = catalog(portal_type='Event', path=path)
-        #return (interfaces.IEvent(x) for x in event_brains)
-    
-    #def event_creation_link(self, start=None, stop=None):
-        #if self.context.portal_membership.checkPermission(
-            #'Add portal content',self.context):
-            #return self.context.absolute_url() + '/createObject?type_name=Event'
-        #return ''
-
-    def getEvents(self, start=None, stop=None, **kw):
-        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        path = '/'.join(self.context.getPhysicalPath())
+    def _getEvents(self, start=None, stop=None, **kw):
         kw = _make_zcatalog_query(start, stop, kw)
         tool = cmfutils.getToolByName(self.context, 'portal_calendar')
         portal_types = tool.getCalendarTypes()
         # Any first occurrences:
-        event_brains = catalog(portal_type=portal_types, path=path, **kw)
+        event_brains = self._query(portal_type=portal_types, **kw)
         # And then the recurrences:
         if stop is None:
             # XXX This is to handle the recurring events in the list view.
@@ -92,44 +71,81 @@ class ATEventProvider(object):
                 res.append(event)
         return res    
 
-class TopicEventProvider(object):
+class ATEventProvider(EventProviderBase):
+    interface.implements(kalends.IEventProvider)
+    component.adapts(atapi.BaseObject)
+    
+    def getEvents(self, start=None, stop=None, **kw):
+        path = '/'.join(self.context.getPhysicalPath())
+        return self._getEvents(start=start, stop=stop, path=path, **kw)
+
+    def _query(self, **kw):
+        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
+        return catalog(**kw)
+
+
+class TopicEventProvider(EventProviderBase):
     interface.implements(kalends.IEventProvider)
     component.adapts(topic.ATTopic)
 
-    def __init__(self, context):
-        self.context = context
-        
-    def acceptable_event(self, x, start, stop):
-        start = dt2DT(start)
-        stop = dt2DT(stop)
-        
-        return x.portal_type == 'Event' and x.start >= start and x.end <= stop
-    
-    def gather_events(self, start=None, stop=None, **kw):
-        kw = _make_zcatalog_query(start, stop, kw)
+    def getEvents(self, start=None, stop=None, **kw):
+        return self._getEvents(start=start, stop=stop, **kw)
 
-        # This sad hack allows us to overwrite whatever restriction
-        # the topic makes to the date.  Providing the 'start' and
-        # 'date' arguments to the 'queryCatalog' method would
-        # otherwise just overwrite our own date criteria.
-        # See http://plone4artists.org/products/plone4artistscalendar/issues/35
+    def _query(self, **kw):
+        q = self.context.buildQuery()
+        if kw.get('start') is not None and q.get('start') is not None:
+            if q['start']['range'] == 'max':
+                # There is a filter capping the maximum start time.
+                # If the filter is earlier than the query, replace it.
+                if q['start']['query'] < kw['start']['query']:
+                    kw['start'] = q['start']
+            elif q['start']['range'] == 'min':
+                # There is a filter capping the minimum start time.
+                # Remake the query into a minmax query:
+                kw['start'] = {'query': (q['start']['query'], 
+                                         kw['start']['query']),
+                              'range': 'minmax'}
+                    
+        if kw.get('end') is not None and q.get('end') is not None:
+            if q['end']['range'] == 'min':
+                # There is a filter capping the minimum start time.
+                # If the filter is later than the query, replace it.
+                if q['end']['query'] > kw['end']['query']:
+                    kw['end'] = q['end']
+            elif q['end']['range'] == 'max':
+                # There is a filter capping the minimum start time.
+                # Remake the query into a minmax query:
+                kw['end'] = {'query': (kw['end']['query'], 
+                                       w['end']['query']),
+                              'range': 'minmax'}
+        q.update(kw)
+        #if kw['end'] < kw['start']:
+            ## The end is before the start: The query should have an empty
+            ## result, but unfortunately, portal_catalog isn't very smart
+            ## about this, and will return stuff that has the end well after
+            ## the end, for some reason. So we special case here:
+            #return []
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        def my_catalog(request, **kwargs):
-            kwargs.update(kw)
-            return catalog(request, **kwargs)
-        self.context.portal_catalog = my_catalog
-        self.context.portal_catalog.searchResults = my_catalog
-        value = (interfaces.IEvent(x) for x in self.context.queryCatalog())
-        del self.context.portal_catalog
-        return value
+        return catalog(**q)
+        
+    #Keep around until I understand the details:
+    #def getEvents(self, start=None, stop=None, **kw):
+        #kw = _make_zcatalog_query(start, stop, kw)
 
-    def all_events(self):
-        #query = self.context.buildQuery()
-        event_brains = self.context.queryCatalog() 
-        return (interfaces.IEvent(x) for x in event_brains)
-
-    def event_creation_link(self, start=None, stop=None):
-        return ""
+        ## This sad hack allows us to overwrite whatever restriction
+        ## the topic makes to the date.  Providing the 'start' and
+        ## 'date' arguments to the 'queryCatalog' method would
+        ## otherwise just overwrite our own date criteria.
+        ## See http://plone4artists.org/products/plone4artistscalendar/issues/35
+        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
+        #def my_catalog(request, **kwargs):
+            #kwargs.update(kw)
+            #return catalog(request, **kwargs)
+        #self.context.portal_catalog = my_catalog
+        #self.context.portal_catalog.searchResults = my_catalog
+        #value = (interfaces.IEvent(x) for x in self.context.queryCatalog())
+        #del self.context.portal_catalog
+        #return value
 
 
 class BrainEvent(object):
