@@ -101,7 +101,13 @@ class TopicEventProvider(EventProviderBase):
                     kw['start'] = q['start']
             elif q['start']['range'] == 'min':
                 # There is a filter capping the minimum start time.
-                # Remake the query into a minmax query:
+                # Remake the query into a minmax query.
+                if q['start']['query'] > kw['start']['query']:
+                    # If you give ZCatalog a minmax query, where min is 
+                    # larger than max it *should* reasonably return an
+                    # empty result. Well. It doesn't... So we handle that 
+                    # case specially here:
+                    return []
                 kw['start'] = {'query': (q['start']['query'], 
                                          kw['start']['query']),
                               'range': 'minmax'}
@@ -115,8 +121,14 @@ class TopicEventProvider(EventProviderBase):
             elif q['end']['range'] == 'max':
                 # There is a filter capping the minimum start time.
                 # Remake the query into a minmax query:
+                if kw['end']['query'] > q['end']['query']:
+                    # If you give ZCatalog a minmax query, where min is 
+                    # larger than max it *should* reasonably return an
+                    # empty result. Well. It doesn't... So we handle that 
+                    # case specially here:
+                    return []
                 kw['end'] = {'query': (kw['end']['query'], 
-                                       w['end']['query']),
+                                       q['end']['query']),
                               'range': 'minmax'}
         q.update(kw)
         #if kw['end'] < kw['start']:
@@ -127,25 +139,6 @@ class TopicEventProvider(EventProviderBase):
             #return []
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         return catalog(**q)
-        
-    #Keep around until I understand the details:
-    #def getEvents(self, start=None, stop=None, **kw):
-        #kw = _make_zcatalog_query(start, stop, kw)
-
-        ## This sad hack allows us to overwrite whatever restriction
-        ## the topic makes to the date.  Providing the 'start' and
-        ## 'date' arguments to the 'queryCatalog' method would
-        ## otherwise just overwrite our own date criteria.
-        ## See http://plone4artists.org/products/plone4artistscalendar/issues/35
-        #catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
-        #def my_catalog(request, **kwargs):
-            #kwargs.update(kw)
-            #return catalog(request, **kwargs)
-        #self.context.portal_catalog = my_catalog
-        #self.context.portal_catalog.searchResults = my_catalog
-        #value = (interfaces.IEvent(x) for x in self.context.queryCatalog())
-        #del self.context.portal_catalog
-        #return value
 
 
 class BrainEvent(object):
