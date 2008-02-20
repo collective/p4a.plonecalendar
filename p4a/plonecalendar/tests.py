@@ -1,18 +1,97 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from DateTime import DateTime
 from Testing import ZopeTestCase
-import p4a.common
-import dateable.chronos
-import p4a.plonecalendar
-from dateable.chronos.tests import EventProviderTestMixin
-from dateable.chronos.interfaces import ICalendarConfig
-from dateable.kalends import IEventProvider
+
+from zope.interface.verify import verifyObject
+
 from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
 from Products.ZCatalog.Lazy import LazyCat
 
+import p4a.common
+import dateable.chronos
+import dateable.kalends
+import p4a.plonecalendar
+from dateable.chronos.interfaces import ICalendarConfig
+from dateable.kalends import IEventProvider, IWebEventCreator
+
 PloneTestCase.setupPloneSite()
+
+
+class EventProviderTestMixin(object):
+    """Tests that the EventProvider API is correctly implemented
+    Since IEventProvider has no implementation in this product
+    these tests must be mixed in with a text that provides an
+    event provider as self.provider in the setUp.
+    """
+    
+    def test_interface(self):
+        verifyObject(dateable.kalends.IEventProvider, self.provider)
+        
+    def test_gather_all(self):
+        all_events = list(self.provider.getOccurrences())
+        gathered_events = list(self.provider.getOccurrences())
+
+        self.failUnlessEqual(len(all_events), len(gathered_events))
+        
+        for i in all_events:
+            verifyObject(dateable.kalends.IOccurrence, i)
+            exists = 0
+            for j in gathered_events:
+                if (i.title == j.title and 
+                    i.start == j.start and
+                    i.end   == j.end):
+                    exists = True
+                    break
+            self.failUnless(exists, "Event lists are not equal")
+                    
+        
+    def test_gather_future(self):
+        all_events = list(self.provider.getOccurrences())
+        if len(all_events) < 2:
+            raise ValueError(
+                "This test requires you to have at least two events "
+                "with non overlapping start and end times.")
+        
+        # Pick out all the end datetimes for the events:
+        end_times = [x.end for x in all_events]
+        end_times.sort()
+        # Pick an end date in the middle:
+        dt = end_times[len(all_events)/2]
+        
+        # Get all dates starting at or after this middle date
+        gathered_events = list(self.provider.getOccurrences(start=dt))
+        
+        for i in all_events:
+            # The event should be returned if the end_date is above
+            # the date given as a start date.
+            should_exist = i.end >= dt
+            
+            # Now check if it exists:
+            exists = False
+            for j in gathered_events:
+                if (i.title == j.title and 
+                    i.start == j.start and
+                    i.end   == j.end):
+                    exists = True
+                    break
+            self.failUnlessEqual(exists, should_exist, 
+                                 "Event lists are not as expected")
+        
+    def test_title_search(self):
+        # This test assumes at least one event, but not all of them
+        # has the text "event" in the title.
+        all_events = list(self.provider.getOccurrences())
+        gathered_events = list(self.provider.getOccurrences(title='event'))
+
+        # Make sure something is returned
+        self.failUnless(gathered_events)
+        # But not everything
+        self.failIfEqual(len(all_events), len(gathered_events))
+        
+        for i in gathered_events:
+            self.failIf(i.title.lower().find('event') == -1)
 
 class CalendarTestCase(PloneTestCase.PloneTestCase):
     def afterSetUp(self):
@@ -46,11 +125,14 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
         config.calendar_activated = True
         
     def afterSetUp(self):
+        CalendarTestCase.afterSetUp(self)
         self.eventSetUp()
         self.provider = IEventProvider(self.folder['calendar-folder'])
 
     def test_createlink(self):
-        link = self.provider.event_creation_link()
+        cal = self.folder['calendar-folder']
+        creator = IWebEventCreator(cal)
+        link = creator.url()
         self.failUnlessEqual(link, "http://nohost/plone/Members/test_user_1_/calendar-folder/createObject?type_name=Event")
 
 
@@ -67,8 +149,9 @@ class TopicEventProviderTest(ATEventProviderTest):
         self.provider = IEventProvider(self.topic)
 
     def test_createlink(self):
-        link = self.provider.event_creation_link()
-        self.failUnlessEqual(link, "")
+        cal = self.folder['calendar-topic']
+        creator = IWebEventCreator(cal)
+        self.failIf(creator.canCreate())
 
     def test_gather_events(self):
         # Make sure that restrictions made by the context topic and
@@ -83,7 +166,7 @@ class TopicEventProviderTest(ATEventProviderTest):
         date_crit.setOperation('more')
 
         calls = []
-        def my_catalog(request, **kwargs):
+        def my_catalog(**kwargs):
             calls.append(kwargs)
             return LazyCat([])
         self.folder.portal_catalog = my_catalog
@@ -92,15 +175,18 @@ class TopicEventProviderTest(ATEventProviderTest):
         # Now let's make sure that a call to the catalog is done with
         # the correct set of arguments, and that the criteria defined
         # in the topic didn't interfere:
-        self.provider.gather_events(start=datetime(1980, 10, 13),
-                                    stop=datetime(1980, 10, 20))
-
+        start = datetime.now()
+        stop = start + timedelta(seconds=3600)
+        self.provider.getEvents(start=start, stop=stop)
+        
+        # XXX I don't like this test, it has too much internal knowledge.
+        # Better to add more functional tests.
         self.assertEqual(len(calls), 1)
         # We don't mind the timezone at this point:
-        self.assertEqual(str(calls[0]['end']['query']),
-                         str(DateTime('1980/10/13')))
-        self.assertEqual(str(calls[0]['start']['query']),
-                         str(DateTime('1980/10/20')))
+        self.assertEqual(calls[0]['end']['query'].strftime('%Y%m%d %H:%M'),
+                         start.strftime('%Y%m%d %H:%M'))
+        self.assertEqual(calls[0]['start']['query'][1].strftime('%Y%m%d %H:%M'),
+                         stop.strftime('%Y%m%d %H:%M'))
 
 class LocationFilterTest(CalendarTestCase):
 
@@ -137,12 +223,14 @@ def test_suite():
                                        optionflags=doctest.ELLIPSIS))
     suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.sitesetup',
                                        optionflags=doctest.ELLIPSIS))
-    suite.addTest(ZopeDocFileSuite('calendar.txt',
-                                   package='p4a.plonecalendar',
-                                   test_class=CalendarTestCase,))
+    # XXX these re browser tests, mostly, and should be moved to chronos.
+    #suite.addTest(ZopeDocFileSuite('calendar.txt',
+                                   #package='p4a.plonecalendar',
+                                   #test_class=CalendarTestCase,))
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
-    suite.addTests(makeSuite(LocationFilterTest))
+    # XXX This isn't implemented in chronos yet:
+    #suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
 
     return suite

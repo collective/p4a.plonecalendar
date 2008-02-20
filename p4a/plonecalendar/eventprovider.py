@@ -8,6 +8,7 @@ from dateable.chronos import interfaces
 from Products.CMFCore import utils as cmfutils
 from Products.Archetypes import atapi
 from Products.ATContentTypes.content import topic
+from Products.ATContentTypes.content import folder
 from Products.CMFCore.utils import getToolByName
 from p4a.common.dtutils import dt2DT, DT2dt
 
@@ -26,7 +27,8 @@ def _make_zcatalog_query(start, stop, kw):
     if start is not None:
         kw['end']={'query': dt2DT(start), 'range': 'min'} 
     return kw
-    
+
+
 class EventProviderBase(object):
     
     def __init__(self, context):
@@ -39,15 +41,15 @@ class EventProviderBase(object):
         # Any first occurrences:
         event_brains = self._query(portal_type=portal_types, **kw)
         # And then the recurrences:
+        if start is None:
+            # XXX This is to handle the recurring events in the past events view.
+            # This could also likely be improved.
+            start = datetime.datetime(1970, 1, 1, 0, 0)
         if stop is None:
             # XXX This is to handle the recurring events in the list view.
             # It should possibly be done some other way, since it will recur to
             # the year 2020 as it is now.
             stop = start + datetime.timedelta(30)
-        if start is None:
-            # XXX This is to handle the recurring events in the past events view.
-            # This could also likely be improved.
-            start = datetime.datetime(1970, 1, 1, 0, 0)
         days = range(start.toordinal(), 
                     (stop + datetime.timedelta(hours=23, minutes=59)).toordinal())
         # XXX How do we make the recurrence story pluggable?
@@ -71,9 +73,10 @@ class EventProviderBase(object):
                 res.append(event)
         return res    
 
+
 class ATEventProvider(EventProviderBase):
     interface.implements(kalends.IEventProvider)
-    component.adapts(atapi.BaseObject)
+    component.adapts(atapi.BaseFolder)
     
     def getEvents(self, start=None, stop=None, **kw):
         path = '/'.join(self.context.getPhysicalPath())
@@ -83,6 +86,30 @@ class ATEventProvider(EventProviderBase):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         return catalog(**kw)
 
+
+class ATEventCreator(object):
+    interface.implements(kalends.IWebEventCreator)
+    component.adapts(atapi.BaseFolder)
+    
+    def __init__(self, context):
+        self.context = context
+        
+    def url(self, start=None, stop=None):
+        """Returns a url to a page that can create an event.
+        
+        Optional start and stop times to pre-fill start and end of event.
+        """
+        return self.context.absolute_url() + '/createObject?type_name=Event'
+        
+    def typeTitle(self):
+        """Returns the type name of the event type created"""
+        return 'Event'
+        
+    def canCreate(self):
+        """Test to know if the current user can create events"""
+        # XXX make a check
+        return True
+    
 
 class TopicEventProvider(EventProviderBase):
     interface.implements(kalends.IEventProvider)
@@ -140,7 +167,31 @@ class TopicEventProvider(EventProviderBase):
         catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         return catalog(**q)
 
+class TopicEventCreator(object):
+    interface.implements(kalends.IWebEventCreator)
+    component.adapts(topic.ATTopic)
+    
+    def __init__(self, context):
+        self.context = context
+        
+    def url(self, start=None, stop=None):
+        """Returns a url to a page that can create an event.
+        
+        Optional start and stop times to pre-fill start and end of event.
+        """
+        raise AssertionError("If you had called canCreate first, you would" \
+                             "know that you can't create events here")
+        
+    def typeTitle(self):
+        """Returns the type name of the event type created"""
+        raise AssertionError("If you had called canCreate first, you would" \
+                             "know that you can't create events here")
+        
+    def canCreate(self):
+        """Test to know if the current user can create events"""
+        return False
 
+    
 class BrainEvent(object):
     interface.implements(kalends.ITimezonedOccurrence)
     component.adapts(CatalogBrains.AbstractCatalogBrain)
@@ -198,6 +249,7 @@ class BrainEvent(object):
     @property
     def timezone(self):
         return self.context.start.timezone()
+
 
 class RecurringBrainEvent(BrainEvent):
     

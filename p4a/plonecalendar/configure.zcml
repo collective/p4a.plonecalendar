@@ -33,7 +33,9 @@
 
   <adapter factory=".calendar.FolderCalendarConfig" />
   <adapter factory=".eventprovider.ATEventProvider" />
+  <adapter factory=".eventprovider.ATEventCreator" />
   <adapter factory=".eventprovider.TopicEventProvider" />
+  <adapter factory=".eventprovider.TopicEventCreator" />
   <adapter factory=".eventprovider.BrainEvent" />
 
   <subscriber
