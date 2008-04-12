@@ -2,6 +2,11 @@
 p4a.plonecalendar Changes
 =========================
 
+p4a.plonecalendar 1.1 (2008-04-12)
+==================================
+
+* Updated documentation
+
 p4a.plonecalendar 1.1b1 (2008-02-20)
 ====================================
 
