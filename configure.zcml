@@ -83,6 +83,11 @@
       interface="zope.app.annotation.IAttributeAnnotatable"
       />
 
+    <five:implements
+      class="Products.ATContentTypes.content.topic.ATTopic"
+      interface="zope.app.annotation.IAttributeAnnotatable"
+      />
+
   </configure>
       
 
