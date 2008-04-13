@@ -7,6 +7,9 @@ p4a.plonecalendar 1.1 (2008-04-12)
 
 * Updated documentation
 
+* Fixed some install bugs under Plone 2.5.
+
+
 p4a.plonecalendar 1.1b1 (2008-02-20)
 ====================================
 
