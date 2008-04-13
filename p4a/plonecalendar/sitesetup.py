@@ -23,7 +23,7 @@ def setup_portal(portal):
     indexing.ensure_object_provides(portal)
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
-    qi.installProducts(['CMFonFive'])
+    qi.installProducts(['Marshall', 'Calendaring'])
     
     subtyper_setup(portal)
 
