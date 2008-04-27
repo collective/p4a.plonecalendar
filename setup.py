@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import sys, os
 
 version = '1.1'
 
@@ -26,7 +25,7 @@ Plone CMS.""",
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'p4a.calendar==1.1b1',
+          'p4a.calendar>=1.1',
           'p4a.subtyper>=1.0.1',
           'p4a.common>=1.0.1',
       ],
