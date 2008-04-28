@@ -1,6 +1,16 @@
+;-*-rst-*-
+
 =========================
 p4a.plonecalendar Changes
 =========================
+
+p4a.plonecalendar 1.2 (unreleased)
+==================================
+
+* Package is now installable via CMFQuickInstaller.
+
+* Dependentent package slugs are now included (meta and regular).
+
 
 p4a.plonecalendar 1.1 (2008-04-12)
 ==================================
