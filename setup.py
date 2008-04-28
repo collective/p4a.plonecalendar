@@ -1,12 +1,20 @@
 from setuptools import setup, find_packages
 
-version = '1.1'
+version = '1.2'
+
+f = open('README.txt')
+readme = f.read()
+f.close()
+
+f = open('CHANGES.txt')
+changes = f.read()
+f.close()
+
 
 setup(name='p4a.plonecalendar',
       version=version,
       description="Plone4Artists calendar add-on for Plone",
-      long_description="""p4a.plonecalendar is a calendaring add-on for the
-Plone CMS.""",
+      long_description=readme + '\n\n' + changes,
       classifiers=[
           'Framework :: Zope3',
           'Framework :: Plone',
@@ -25,11 +33,7 @@ Plone CMS.""",
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'p4a.calendar>=1.1',
-          'p4a.subtyper>=1.0.1',
-          'p4a.common>=1.0.1',
+          'p4a.calendar >= 1.2dev',
+          'p4a.subtyper >= 1.0.1, <=1.0.9999',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )
