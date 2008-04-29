@@ -1,7 +1,7 @@
 from zope import component
 from zope import interface
 from zope import schema
-from p4a.calendar import interfaces
+from dateable.chronos import interfaces
 
 class Support(object):
     """A view that returns certain information regarding p4acal status.

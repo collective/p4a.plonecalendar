@@ -33,6 +33,8 @@ setup(name='p4a.plonecalendar',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'dateable.chronos',
+          'dateable.kalends',
           'p4a.calendar >= 1.2dev',
           'p4a.subtyper >= 1.0.1, <=1.0.9999',
       ],

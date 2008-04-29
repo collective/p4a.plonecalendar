@@ -7,8 +7,8 @@
  
   <include package="p4a.z2utils" />
   <include package="p4a.common" />
-  <include package="p4a.calendar" />
   <include package="p4a.subtyper" />
+  <include package="dateable.chronos" />
 
   <browser:resourceDirectory
       name="p4aplonecalendar"
@@ -18,26 +18,28 @@
         
   <five:implements
       class="Products.ATContentTypes.content.folder.ATFolder"
-      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      interface="dateable.chronos.interfaces.IPossibleCalendar"
       />
 
   <five:implements
       class="Products.ATContentTypes.content.folder.ATBTreeFolder"
-      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      interface="dateable.chronos.interfaces.IPossibleCalendar"
       />
 
   <five:implements
       class="Products.ATContentTypes.content.topic.ATTopic"
-      interface="p4a.calendar.interfaces.IPossibleCalendar"
+      interface="dateable.chronos.interfaces.IPossibleCalendar"
       />
 
   <adapter factory=".calendar.FolderCalendarConfig" />
   <adapter factory=".eventprovider.ATEventProvider" />
+  <adapter factory=".eventprovider.ATEventCreator" />
   <adapter factory=".eventprovider.TopicEventProvider" />
+  <adapter factory=".eventprovider.TopicEventCreator" />
   <adapter factory=".eventprovider.BrainEvent" />
 
   <subscriber
-      for="p4a.calendar.interfaces.ICalendarEnhanced
+      for="dateable.chronos.interfaces.ICalendarEnhanced
            zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".update_catalog"
       />

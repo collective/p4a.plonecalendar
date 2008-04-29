@@ -2,7 +2,7 @@ import urllib2
 from StringIO import StringIO
 from zope import interface
 from Products.CMFCore.utils import getToolByName
-from p4a.calendar.interfaces import IEventProvider
+from dateable.kalends import IEventProvider
 
 
 class IiCalendarView(interface.Interface):

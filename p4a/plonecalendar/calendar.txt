@@ -2,7 +2,7 @@ Calendar
 ========
 
 This file describes the nature of the integration of calendar functionality
-as exposed by p4a.calendar on the Plone platform.
+as exposed by dateable.chronos on the Plone platform.
 
 We start out by building up a folder with some events.
 

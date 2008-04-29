@@ -1,5 +1,5 @@
 import pkg_resources
-from p4a.calendar import interfaces
+from dateable.chronos import interfaces
 from Acquisition import aq_inner, aq_parent
 
 VERSION = pkg_resources.get_distribution('p4a.plonecalendar').version

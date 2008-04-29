@@ -1,6 +1,6 @@
 from zope.interface import implements
 from zope.component import adapts
-from p4a.calendar.interfaces import ICalendarEnhanced
+from dateable.chronos.interfaces import ICalendarEnhanced
 
 from Products.CMFDynamicViewFTI.interfaces import IDynamicallyViewable
 
