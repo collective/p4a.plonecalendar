@@ -212,15 +212,7 @@ def test_suite():
     from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
     from zope.testing import doctest
 
-    # First make sure we are were we think we are:
-    import os, time
-    os.environ['TZ'] = 'Europe/Paris'
-    time.tzset()
-    
-    
     suite = TestSuite()
-    suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.utils',
-                                       optionflags=doctest.ELLIPSIS))
     suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.sitesetup',
                                        optionflags=doctest.ELLIPSIS))
     # XXX these re browser tests, mostly, and should be moved to chronos.
