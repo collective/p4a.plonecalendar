@@ -68,7 +68,7 @@ class EventProviderBase(object):
         res = []
         for event in events:
             if kalends.IRecurring.providedBy(event):
-                res.extend(event.getOcurrences(start, stop))
+                res.extend(event.getOccurrences(start, stop))
             else:
                 res.append(event)
         return res    
@@ -255,7 +255,7 @@ class RecurringBrainEvent(BrainEvent):
     
     interface.implements(kalends.ITimezonedRecurringEvent)
 
-    def getOcurrences(self, start, stop):
+    def getOccurrences(self, start, stop):
         event = self._getEvent()
         res = []
         for each in event.calc_recueDays(start, stop):
