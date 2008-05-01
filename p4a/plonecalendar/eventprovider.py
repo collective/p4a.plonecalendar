@@ -281,7 +281,7 @@ class RecurringBrainEvent(BrainEvent):
         if stop is not None:
             stopdate = stop.toordinal()
         event = self._getEvent()
-        recurrence = interfaces.IRecurrenceSupport(event)
+        recurrence = interfaces.IRecurrence(event)
         res = []
 
         for each in recurrence.getOccurrenceDays():
