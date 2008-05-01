@@ -19,7 +19,7 @@ We start out by building up a folder with some events.
 Now we go ahead and activate calendaring capabilities on this new
 folder.
 
-  >>> from p4a.calendar.interfaces import ICalendarConfig
+  >>> from p4a.plonecalendar.interfaces import ICalendarConfig
   >>> config = ICalendarConfig(calendarfolder)
   >>> config.calendar_activated
   False

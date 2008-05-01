@@ -9,6 +9,7 @@ from Products.ATContentTypes.content import topic
 from Products.CMFCore.utils import getToolByName
 from p4a.common.dtutils import dt2DT, DT2dt
 from dateable import kalends
+from p4a.ploneevent.recurrence import interfaces
 
 
 def _make_zcatalog_query(start, stop, kw):
@@ -37,6 +38,7 @@ class EventProviderBase(object):
     def _getEvents(self, start=None, stop=None, **kw):
         kw = _make_zcatalog_query(start, stop, kw)
         tool = cmfutils.getToolByName(self.context, 'portal_calendar')
+        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         portal_types = tool.getCalendarTypes()
         # Any first occurrences:
         event_brains = self._query(portal_type=portal_types, **kw)
@@ -56,10 +58,14 @@ class EventProviderBase(object):
         # This didn't work, because if RecurringEvent is not installed all fails:
         # Maybe we don't need pluggability, we could just require p4a.ploneevent,
         # But at least it should work without it....
-        #recurrences = catalog(portal_type=portal_types, 
-                              #path=path, 
-                              #getRecueDays=days)
-        recurrences = []
+        if 'start' in kw:
+            del kw['start']
+        if 'end' in kw:
+            del kw['end']
+        recurrences = catalog(portal_type=portal_types, 
+                              recurrence_days=days,
+                              **kw)
+        
         return tuple((kalends.ITimezonedOccurrence(x) for x in event_brains)) + \
                tuple((kalends.ITimezonedRecurringEvent(x) for x in recurrences))
 
@@ -196,12 +202,13 @@ class BrainEvent(object):
     interface.implements(kalends.ITimezonedOccurrence)
     component.adapts(CatalogBrains.AbstractCatalogBrain)
 
-    def __init__(self, context):
+    def __init__(self, context, date=None):
         self.context = context
         self.event = None
         catalog = getToolByName(self.context, 'portal_catalog')
         putils = getToolByName(self.context, 'plone_utils')
         self.encoding = putils.getSiteEncoding()
+        self.date = date
         
     def __cmp__(self, other):
         return cmp(self.start, other.start)
@@ -223,11 +230,23 @@ class BrainEvent(object):
     
     @property
     def start(self):
-        return DT2dt(self.context.start)
+        dt = DT2dt(self.context.start)
+        if self.date is not None:
+            dt = dt.replace(year=self.date.year,
+                            month=self.date.month,
+                            day=self.date.day)
+        return dt
 
     @property
     def end(self):
-        return DT2dt(self.context.end)
+        dt = DT2dt(self.context.end)
+        if self.date is not None:
+            dt = dt.replace(year=self.date.year,
+                            month=self.date.month,
+                            day=self.date.day)
+            diff = dt.date() - DT2dt(self.context.start).date()
+            dt = dt + diff
+        return dt
     
     @property
     def location(self):
@@ -254,14 +273,24 @@ class BrainEvent(object):
 class RecurringBrainEvent(BrainEvent):
     
     interface.implements(kalends.ITimezonedRecurringEvent)
+    component.adapts(CatalogBrains.AbstractCatalogBrain)
 
     def getOccurrences(self, start, stop):
+        if start is not None:
+            startdate = start.toordinal()
+        if stop is not None:
+            stopdate = stop.toordinal()
         event = self._getEvent()
+        recurrence = interfaces.IRecurrenceSupport(event)
         res = []
-        for each in event.calc_recueDays(start, stop):
+
+        for each in recurrence.getOccurrenceDays():
+            if start is not None and each < startdate:
+                continue
+            if stop is not None and each > stopdate:
+                break
             dt = datetime.date.fromordinal(each)
-            res.append(Ocurrence(self.context, dt))
+            res.append(BrainEvent(self.context, dt))
             
         return res
             
-        
