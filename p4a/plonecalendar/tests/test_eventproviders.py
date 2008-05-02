@@ -1,3 +1,4 @@
+from unittest import TestSuite, makeSuite
 from datetime import datetime, timedelta
 from DateTime import DateTime
 from Testing import ZopeTestCase
@@ -10,8 +11,6 @@ from Products.PloneTestCase import layer
 from Products.PloneTestCase.setup import portal_owner, default_password
 from Products.ZCatalog.Lazy import LazyCat
 
-import p4a.common
-import dateable.chronos
 import dateable.kalends
 import p4a.plonecalendar
 from dateable.chronos.interfaces import ICalendarConfig
@@ -271,20 +270,10 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         
 
 def test_suite():
-    from unittest import TestSuite, makeSuite
-    from Testing.ZopeTestCase.zopedoctest import ZopeDocFileSuite
-    from zope.testing import doctest
 
     suite = TestSuite()
-    suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.sitesetup',
-                                       optionflags=doctest.ELLIPSIS))
-    # XXX these re browser tests, mostly, and should be moved to chronos.
-    #suite.addTest(ZopeDocFileSuite('calendar.txt',
-                                   #package='p4a.plonecalendar',
-                                   #test_class=CalendarTestCase,))
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
-    suite.addTests(makeSuite(TestFunctional))
     # XXX This isn't implemented in chronos yet:
     #suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
