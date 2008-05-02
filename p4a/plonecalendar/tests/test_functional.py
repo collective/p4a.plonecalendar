@@ -28,9 +28,41 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         link.click()
         self.failUnless("Changed subtype to Calendar" in browser.contents)
         
+    def _save(self, browser):
+        f = open("/tmp/browser.html", "w")
+        f.write(browser.contents)
+        f.close()
+        
     def _isInCalendar(self, browser, text, calendar_start='class="ploneCalendar"'):
         return text in browser.contents[browser.contents.index(calendar_start):]
 
+    def test_disabling(self):
+        browser = Browser()
+        browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
+        browser.handleErrors = False
+        portal_url = self.portal.absolute_url()
+        
+        browser.open(portal_url + '/a-calendar')
+        link = browser.getLink(id='ICalendarEnhanced')
+        link.click()
+        self.failUnless("Removed Calendar subtype" in browser.contents)
+        
+        # Enable it again:        
+        link = browser.getLink(id='ICalendarEnhanced')
+        link.click()
+        self.failUnless("Changed subtype to Calendar" in browser.contents)
+        
+        # Set month as a default view:
+        link = browser.getLink(id="list.html")
+        link.click()
+        self.failUnless("View changed." in browser.contents)
+        
+        # And disable it:
+        # This is a test for bug #65:
+        link = browser.getLink(id='ICalendarEnhanced')
+        link.click()
+        self.failUnless("Removed Calendar subtype" in browser.contents)
+        
     def test_basic_views(self):
         browser = Browser()
         browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))

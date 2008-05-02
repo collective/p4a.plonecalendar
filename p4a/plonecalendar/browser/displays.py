@@ -4,6 +4,8 @@ from dateable.chronos.interfaces import ICalendarEnhanced
 
 from Products.CMFDynamicViewFTI.interfaces import IDynamicallyViewable
 
+# What views exist should rather be defined in dateable.chronos...
+
 class CalendarDynamicViews(object):
     
     implements(IDynamicallyViewable)
@@ -27,6 +29,8 @@ class CalendarDynamicViews(object):
         """Get the layouts registered for this object.
         """        
         return (("month.html", "Month view"),
-                ("events.html", "Event list"),
-                ("past_events.html", "Event archive"),
+                ("week.html", "Week view"),
+                ("day.html", "Day view"),
+                ("list.html", "Event list"),
+                ("past.html", "Event archive"),
                 )
