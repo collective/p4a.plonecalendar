@@ -181,11 +181,6 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.open(folder_url + '?date=2007-05-01')
         self.failUnless(self._isInCalendar(browser, "An Event"))
 
-    def test_dateutil(self):
-        from dateutil import rrule
-        print rrule.__file__
-        self.failUnless('1.2' in rrule.__file__)
-        
 
 def test_suite():
     suite = TestSuite()
