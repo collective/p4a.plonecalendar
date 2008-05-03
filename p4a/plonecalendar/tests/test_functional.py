@@ -159,18 +159,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form.getControl(name='endDate_day').value = ['01']
         form.getControl(name='endDate_hour').value = ['11']
         form.getControl(name='endDate_minute').value = ['00']
-        form.getControl(name='form_submit').click()
-        self.failUnless('an-event' in browser.url)
-        
         # Make it recur.
-        link = browser.getLink(id='IRecurringEvent')
-        link.click()
-        self.failUnless("Changed subtype to Recurring Event" in browser.contents)
-        
-        # Edit the recurrence info:
-        link = browser.getLink('Edit')
-        link.click()
-        form = browser.getForm('event-base-edit')
         form.getControl(name='frequency').value = ['1']
         form.getControl(name='form_submit').click()
         
