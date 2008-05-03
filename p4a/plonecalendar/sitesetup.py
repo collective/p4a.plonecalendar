@@ -4,6 +4,7 @@ from p4a.common import site
 from p4a.z2utils import indexing
 from p4a.z2utils import utils
 from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
+from p4a.ploneevent.sitesetup import setup_portal as ploneevent_setup
 from Products.CMFCore import utils as cmfutils
 
 import logging
@@ -17,7 +18,10 @@ def setup_portal(portal):
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
     qi.installProducts(['Marshall', 'Calendaring'])
+    setup_profile(portal)
+    
     subtyper_setup(portal)
+    ploneevent_setup(portal)
 
 
 def setup_site(site):
@@ -40,6 +44,11 @@ def setup_site(site):
     if not sm.queryUtility(interfaces.ICalendarSupport):
         sm.registerUtility(content.CalendarSupport('calendar_support'),
                            interfaces.ICalendarSupport)
+
+def setup_profile(site):
+    setup_tool = site.portal_setup
+    setup_tool.setImportContext('profile-p4a.plonecalendar:default')
+    setup_tool.runAllImportSteps()
 
 
 def _cleanup_utilities(site):
