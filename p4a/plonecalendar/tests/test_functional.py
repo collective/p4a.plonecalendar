@@ -11,6 +11,9 @@ PloneTestCase.setupPloneSite()
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
     
+    # XXX Many of these tests belong in dateable.chronos. However, we need
+    # to make fake objects for that, so they are here, for the moment. /regebro
+    
     def afterSetUp(self):
         ZopeTestCase.utils.setupCoreSessions(self.app)
         browser = Browser()
@@ -34,7 +37,10 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         f.close()
         
     def _isInCalendar(self, browser, text, calendar_start='class="ploneCalendar"'):
-        return text in browser.contents[browser.contents.index(calendar_start):]
+        contents = browser.contents[browser.contents.index(calendar_start):]
+        contents = contents.replace('\n', ' ').replace('\t', ' ')
+        contents = ' '.join([x.strip() for x in contents.split(' ') if x.strip()])
+        return text in contents
 
     def test_disabling(self):
         browser = Browser()
@@ -57,8 +63,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         link.click()
         self.failUnless("View changed." in browser.contents)
         
-        # And disable it:
-        # This is a test for bug #65:
+        # And disable it (this is a test for bug #65):
         link = browser.getLink(id='ICalendarEnhanced')
         link.click()
         self.failUnless("Removed Calendar subtype" in browser.contents)
@@ -107,6 +112,31 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.getLink('List').click()
         #import pdb;pdb.set_trace()
         self.failIf(self._isInCalendar(browser, "An Event", 'class="eventlist"'))
+
+    def test_navigation(self):
+        browser = Browser()
+        browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
+        browser.handleErrors = False
+        portal_url = self.portal.absolute_url()
+        browser.open(portal_url + '/a-calendar/month.html?date=2008-04-10')
+
+        self.failUnless(self._isInCalendar(browser, 'April 2008'))
+        browser.getLink(id="calendar-nav-previous").click()
+        self.failUnless(self._isInCalendar(browser, 'March 2008'))
+        browser.getLink(id="calendar-nav-next").click()
+        self.failUnless(self._isInCalendar(browser, 'April 2008'))
+        browser.getLink('Week').click()
+        self.failUnless(self._isInCalendar(browser, '<span>Week</span> <span>15</span>'))
+        browser.getLink(id="calendar-nav-previous").click()
+        self.failUnless(self._isInCalendar(browser, '<span>Week</span> <span>14</span>'))
+        browser.getLink(id="calendar-nav-next").click()
+        self.failUnless(self._isInCalendar(browser, '<span>Week</span> <span>15</span>'))
+        browser.getLink('Day').click()
+        self.failUnless(self._isInCalendar(browser, 'Th 10/04'))
+        browser.getLink(id="calendar-nav-previous").click()
+        self.failUnless(self._isInCalendar(browser, 'We 09/04'))
+        browser.getLink(id="calendar-nav-next").click()
+        self.failUnless(self._isInCalendar(browser, 'Th 10/04'))
         
     def test_basic_recurrence(self):
         browser = Browser()
