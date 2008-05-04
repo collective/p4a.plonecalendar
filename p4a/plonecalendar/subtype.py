@@ -9,6 +9,7 @@ class AbstractCalendarDescriptor(object):
     title = u'Calendar'
     description = u'A folder that holds event objects'
     type_interface = interfaces.ICalendarEnhanced
+    icon = '++resource++chronos_support/calendar_icon.gif'
 
 
 class FolderCalendarDescriptor(AbstractCalendarDescriptor):
