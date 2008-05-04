@@ -55,10 +55,6 @@
       />
 
   <zope:adapter 
-        factory=".displays.CalendarDynamicViews"
-        />
-
-  <zope:adapter 
         factory=".eventfilter.LocationFilter"
         name="eventfilter"
         />
