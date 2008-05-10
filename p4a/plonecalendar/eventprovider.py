@@ -9,7 +9,6 @@ from Products.ATContentTypes.content import topic
 from Products.CMFCore.utils import getToolByName
 from p4a.common.dtutils import dt2DT, DT2dt
 from dateable import kalends
-from p4a.ploneevent.recurrence import interfaces
 
 
 def _make_zcatalog_query(start, stop, kw):
@@ -73,7 +72,7 @@ class EventProviderBase(object):
         events = self.getEvents(start, stop, **kw)
         res = []
         for event in events:
-            if kalends.IRecurring.providedBy(event):
+            if kalends.IRecurringEvent.providedBy(event):
                 res.extend(event.getOccurrences(start, stop))
             else:
                 res.append(event)
@@ -281,7 +280,7 @@ class RecurringBrainEvent(BrainEvent):
         if stop is not None:
             stopdate = stop.toordinal()
         event = self._getEvent()
-        recurrence = interfaces.IRecurrence(event)
+        recurrence = kalends.IRecurrence(event)
         res = []
 
         for each in recurrence.getOccurrenceDays():
