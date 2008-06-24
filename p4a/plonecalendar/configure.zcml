@@ -70,7 +70,7 @@
   <!-- Generic Setup Profile -->
   <genericsetup:registerProfile
       name="default"
-      title="Plone4AArtists Calendar"
+      title="Plone4Artists PloneCalendar"
       directory="profiles/default"
       description="A calendar for plone"
       provides="Products.GenericSetup.interfaces.EXTENSION"
