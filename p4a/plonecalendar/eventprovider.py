@@ -286,7 +286,7 @@ class RecurringBrainEvent(BrainEvent):
         for each in recurrence.getOccurrenceDays():
             if start is not None and each < startdate:
                 continue
-            if stop is not None and each > stopdate:
+            if stop is not None and each >= stopdate:
                 break
             dt = datetime.date.fromordinal(each)
             res.append(BrainEvent(self.context, dt))
