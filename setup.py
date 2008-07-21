@@ -36,7 +36,7 @@ setup(name='p4a.plonecalendar',
           'dateable.chronos',
           'dateable.kalends',
           'p4a.calendar >= 1.2dev',
-          'p4a.subtyper >= 1.0.1, <=1.0.9999',
+          'p4a.subtyper >= 1.1, <=1.1.9999',
           'p4a.ploneevent',
       ],
       )
