@@ -112,9 +112,9 @@ class ATEventCreator(object):
         
     def canCreate(self):
         """Test to know if the current user can create events"""
-        # XXX make a check
-        return True
-    
+        mtool = cmfutils.getToolByName(self.context, 'portal_membership')
+        return mtool.checkPermission('Add portal content', self.context)
+
 
 class TopicEventProvider(EventProviderBase):
     interface.implements(kalends.IEventProvider)
