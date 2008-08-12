@@ -47,7 +47,7 @@ class iCalendarView(object):
 
         ct = getToolByName(self, 'portal_calendar')
         eventprovider = IEventProvider(self.context)
-        events = [x.context.getObject() for x in eventprovider.all_events()]
+        events = [x.context.getObject() for x in eventprovider.getEvents()] #all_events()]
         self.request.RESPONSE.setHeader(
             'Content-Type', 'text/calendar;charset=utf-8')
         return ct.exportCalendar(events=events, REQUEST=REQUEST)
