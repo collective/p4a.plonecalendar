@@ -243,8 +243,6 @@ class BrainEvent(object):
             dt = dt.replace(year=self.date.year,
                             month=self.date.month,
                             day=self.date.day)
-            diff = dt.date() - DT2dt(self.context.start).date()
-            dt = dt + diff
         return dt
     
     @property
@@ -286,7 +284,7 @@ class RecurringBrainEvent(BrainEvent):
         for each in recurrence.getOccurrenceDays():
             if start is not None and each < startdate:
                 continue
-            if stop is not None and each >= stopdate:
+            if stop is not None and each > stopdate:
                 break
             dt = datetime.date.fromordinal(each)
             res.append(BrainEvent(self.context, dt))
