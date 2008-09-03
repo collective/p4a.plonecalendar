@@ -47,9 +47,10 @@ def setup_site(site):
 
 def setup_profile(site):
     setup_tool = site.portal_setup
-    setup_tool.setImportContext('profile-p4a.plonecalendar:default')
-    setup_tool.runAllImportSteps()
-
+    for profile in ['p4a.plonecalendar', 'dateable.chronos']:
+        setup_tool.setImportContext('profile-%s:default' % profile)
+        setup_tool.runAllImportSteps()
+        
 
 def _cleanup_utilities(site):
     raise NotImplementedError('Current ISiteManager support does not '
