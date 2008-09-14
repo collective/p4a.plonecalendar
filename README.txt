@@ -4,6 +4,8 @@
  p4a.plonecalendar
 ===================
 
+TODO: Add some info here about how to install with buildout and what the dependencies are (see setup.py)
+
 Overview
 ========
 
