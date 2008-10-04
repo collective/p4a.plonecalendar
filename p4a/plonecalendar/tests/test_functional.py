@@ -6,7 +6,7 @@ from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
 from Products.PloneTestCase.setup import portal_owner, default_password
 
-PloneTestCase.setupPloneSite()
+PloneTestCase.setupPloneSite(products=['p4a.plonecalendar'])
 
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
