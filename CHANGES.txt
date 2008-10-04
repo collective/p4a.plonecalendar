@@ -10,6 +10,12 @@ p4a.plonecalendar 2.0a2 (XXXX-XX-XX)
 * Implemented the canCreate method for the ATEventCreator so that the 'Add...'
   does not show for anonymous. (claytron)
 
+* Updated the way we get all the events in the exportCalendar method and
+  added parameters for restricting the export. (lucielejard)
+
+* Various fixes in the recurring event support.
+
+
 p4a.plonecalendar 2.0a1 (2008-07-09)
 ====================================
 
