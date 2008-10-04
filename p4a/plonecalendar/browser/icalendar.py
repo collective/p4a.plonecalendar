@@ -56,14 +56,14 @@ class iCalendarView(object):
     def PUT(self, REQUEST, RESPONSE):
         """This is a PUT method for iCalendar access.
 
-        The PUT method is found on the view "icalendar.ics". This
-        can be slightly confusing, as it's there is no configure.zcml
-        entry for it.
-        This is also the reason why the export view "icalendar.ics" has
-        to be a template and not an attribute. As a template it is
-        called by calling the view class, as an attribute, it is called
-        by traversing to a default browser element, which is the attribute.
-        That attribute doesn't have a PUT-method and WebDAV stops working.
+        The PUT method is found on the view "icalendar.ics". This can be
+        slightly confusing, as it's there is no configure.zcml entry for it.
+        This is also the reason why the export view "icalendar.ics" has to use
+        template and not just an attribute on the view. As a template it is
+        called by calling the view class which can have a PUT-method. If it
+        was an attribute, it would be called by traversing to a default
+        browser element, which is the attribute. That attribute doesn't have a
+        PUT-method and WebDAV wouldn't work.
         """
         ct = getToolByName(self.context, 'portal_calendar')
         ct.importCalendar(REQUEST['BODYFILE'], dest=self.context,
