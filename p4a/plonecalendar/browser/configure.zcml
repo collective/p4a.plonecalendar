@@ -58,5 +58,13 @@
         factory=".eventfilter.LocationFilter"
         name="eventfilter"
         />
+        
+  <viewlet
+      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      name="chronos.p4aimportexport"
+      manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
+      template="navigation.pt"
+      permission="cmf.ModifyPortalContent"
+      />
 
 </configure>
