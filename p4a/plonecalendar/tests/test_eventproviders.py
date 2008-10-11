@@ -267,13 +267,35 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.open(folder_url + '?date=2007-05-01')
         calendar = browser.contents[browser.contents.index('class="ploneCalendar"'):]
         self.failUnless("An Event" in calendar)
+
+class CreateEvent(CalendarTestCase):
+    """ Lets try to create an event using CreateEventByDate """
+
+    def afterSetUp(self):
+        # Create folder.
+        self.folder.invokeFactory('Folder', id='calendarfolder')
+        self.calendarfolder = self.folder['calendarfolder']
+        # Activate calendaring capabilities on this folder
+        config = ICalendarConfig(self.calendarfolder)
+        config.calendar_activated = True
+
+    def testCreateEvent(self):
+        view = self.calendarfolder.unrestrictedTraverse('create_event')
+        # create an object using view
+        day = "5/1/2008"
         
+        view.create_event_by_date(day=day, id="test_event")
+        # do we have an object with correct date?
+        evt = self.calendarfolder.unrestrictedTraverse('test_event')
+        self.failUnless(evt.startDate == DateTime(day))
+        self.failUnless(evt.endDate == DateTime(day))
 
 def test_suite():
 
     suite = TestSuite()
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
+    suite.addTests(makeSuite(CreateEvent))
     # XXX This isn't implemented in chronos yet:
     #suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
