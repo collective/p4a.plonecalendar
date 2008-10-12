@@ -105,12 +105,16 @@ class ATEventCreator(object):
         Optional start and stop times to pre-fill start and end of event.
         """
         if start:
-            return_url = self.context.absolute_url() +\
-                '/create_event?day=%s' % start
+            # if there is a start date, use it to initalize the new Event
+            if not stop:
+                stop = start
+            id=self.context.generateUniqueId('Event')
+            return self.context.absolute_url() +\
+                '/portal_factory/Event/%s/edit?startDate=%s&endDate=%s' % \
+                (id, start, stop)
         else:
-            return_url = self.context.absolute_url() +\
+            return self.context.absolute_url() +\
                 '/createObject?type_name=Event'
-        return return_url
         
     def typeTitle(self):
         """Returns the type name of the event type created"""

@@ -54,14 +54,6 @@
       allowed_interface=".icalendar.IiCalendarView"
       />
 
-  <page
-      name="create_event"
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
-      permission="cmf.ModifyPortalContent"
-      attribute="create_event_by_date"
-      class=".create_event.CreateEvent"
-      />
-
   <zope:adapter 
         factory=".eventfilter.LocationFilter"
         name="eventfilter"
