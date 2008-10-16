@@ -30,6 +30,15 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         link = browser.getLink(id='ICalendarEnhanced')
         link.click()
         self.failUnless("Changed subtype to Calendar" in browser.contents)
+        # Create a blank topic:
+        browser.open(portal_url)
+        browser.getLink('Collection').click()
+        form = browser.getForm('topic-base-edit')
+        form.getControl(name='title').value = 'A Calendar Collection'
+        form.getControl(name='form_submit').click()
+        link = browser.getLink(id='ICalendarEnhanced')
+        link.click()
+        self.failUnless("Changed subtype to Calendar" in browser.contents)
         
     def _save(self, browser):
         f = open("/tmp/browser.html", "w")

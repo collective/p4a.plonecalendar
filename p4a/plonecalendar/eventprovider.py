@@ -133,6 +133,10 @@ class TopicEventProvider(EventProviderBase):
 
     def _query(self, **kw):
         q = self.context.buildQuery()
+        # if there are no criteria we'll get None
+        if q is None:
+            q = {}
+        
         if kw.get('start') is not None and q.get('start') is not None:
             if q['start']['range'] == 'max':
                 # There is a filter capping the maximum start time.
