@@ -37,7 +37,6 @@ class EventProviderBase(object):
     def _getEvents(self, start=None, stop=None, **kw):
         kw = _make_zcatalog_query(start, stop, kw)
         tool = cmfutils.getToolByName(self.context, 'portal_calendar')
-        catalog = cmfutils.getToolByName(self.context, 'portal_catalog')
         portal_types = tool.getCalendarTypes()
         # Any first occurrences:
         event_brains = self._query(portal_type=portal_types, **kw)
@@ -61,10 +60,9 @@ class EventProviderBase(object):
             del kw['start']
         if 'end' in kw:
             del kw['end']
-        recurrences = catalog(portal_type=portal_types, 
-                              recurrence_days=days,
-                              **kw)
-        
+        recurrences = self._query(portal_type=portal_types, 
+                                  recurrence_days=days,
+                                  **kw)
         return tuple((kalends.ITimezonedOccurrence(x) for x in event_brains)) + \
                tuple((kalends.ITimezonedRecurringEvent(x) for x in recurrences))
 

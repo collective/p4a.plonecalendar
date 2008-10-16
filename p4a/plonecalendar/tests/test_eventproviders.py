@@ -164,6 +164,10 @@ class TopicEventProviderTest(ATEventProviderTest):
         date_crit.setValue(0)
         date_crit.setDateRange('+')
         date_crit.setOperation('more')
+        
+        # Adding a criteria other than time
+        subject_crit = self.topic.addCriterion('Subject', 'ATListCriterion')
+        subject_crit.setValue(['foo', 'bar'])
 
         calls = []
         def my_catalog(**kwargs):
@@ -182,6 +186,10 @@ class TopicEventProviderTest(ATEventProviderTest):
         # XXX I don't like this test, it has too much internal knowledge.
         # Better to add more functional tests.
         self.assertEqual(len(calls), 2)
+        # test to make sure that the recurrence search still has the extra
+        # parameters in it
+        self.failIf('Subject' not in calls[1].keys())
+        
         # We don't mind the timezone at this point:
         self.assertEqual(calls[0]['end']['query'].strftime('%Y%m%d %H:%M'),
                          start.strftime('%Y%m%d %H:%M'))
