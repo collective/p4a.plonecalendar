@@ -1,6 +1,4 @@
 <div>
-  click here to import <a href="import.html">
-      <img class="navigationIcon" src="#"
-        tal:attributes="src string:${context/++resource++p4aplonecalendar/icon_import_ical.png}"  />
-  </a>
+<a href="import.html"><img class="navigationIcon" src="#"
+        tal:attributes="src string:${context/++resource++p4aplonecalendar/icon_import_ical.png}"  />import iCal </a>
 </div>
