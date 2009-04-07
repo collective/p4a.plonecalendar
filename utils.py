@@ -18,11 +18,11 @@ Doublecheck conversions:
 import datetime
 from DateTime import DateTime
 try:
-    import dateutil
+    import dateutil.tz
 except ImportError:
     # To make Calendaring patch in dateutils:
     import Products.Calendaring
-    import dateutil
+    import dateutil.tz
 
 def gettz(name=None):
     try:
