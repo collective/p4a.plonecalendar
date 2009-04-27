@@ -4,6 +4,7 @@ from p4a.common import site
 from p4a.z2utils import indexing
 from p4a.z2utils import utils
 from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
+from p4a.subtyper.sitesetup import unsetup_portal as subtyper_unsetup
 from p4a.ploneevent.sitesetup import setup_portal as ploneevent_setup
 from Products.CMFCore import utils as cmfutils
 
@@ -18,11 +19,17 @@ def setup_portal(portal):
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
     qi.installProducts(['Marshall', 'Calendaring'])
+    setup_profile(portal)
     
     subtyper_setup(portal)
     ploneevent_setup(portal)
 
-
+def setup_profile(site):
+    setup_tool = site.portal_setup
+    for profile in ['dateable.chronos']:
+        setup_tool.setImportContext('profile-%s:default' % profile)
+        setup_tool.runAllImportSteps()
+ 
 def setup_site(site):
     """Install all necessary components and configuration into the
     given site.
@@ -45,12 +52,6 @@ def setup_site(site):
                            interfaces.ICalendarSupport)
 
 def unsetup_portal(portal):
-    # First we need to make sure that object_provides is up to date.
-    # Setting marker interfaces doesn't automatically update the catalog.
-    #portal.portal_catalog.reindexIndex('object_provides')
-    #count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
-    #logger.warn('Removed ICalendarEnhanced interface from %i objects for '
-                #'cleanup' % count)
     sm = portal.getSiteManager()
     component = sm.queryUtility(interfaces.ICalendarSupport)
     
@@ -63,4 +64,20 @@ def unsetup_portal(portal):
     # Verify that there is no trace of the utility:
     assert(interfaces.IBasicCalendarSupport not in sm.utilities._provided)
 
+    # Now we need to remove all the marker interfaces.
+    # First we need to make sure that object_provides is up to date.
+    # Setting marker interfaces doesn't automatically update the catalog.
+    portal.portal_catalog.manage_reindexIndex(('object_provides',))
+    # Then we can use the removal utility to unregister all of them:
+    count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
+    logger.warn('Removed ICalendarEnhanced interface from %i objects for '
+                'cleanup' % count)
     
+    subtyper_unsetup(portal, reindex=False)
+    # Remove the chronos calendar tool and put the old one back:
+    # (XXX should be done in Chronos, but this is a quick hack)
+    from Products.CMFPlone.CalendarTool import CalendarTool
+    portal._delObject('portal_calendar')
+    # For some reason, this does not work. I don't know why.
+    portal._setObject('portal_calendar', CalendarTool())
+ 
