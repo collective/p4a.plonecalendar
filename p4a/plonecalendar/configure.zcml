@@ -67,15 +67,6 @@
       name="p4a.plonecalendar.TopicCalendar"
       factory=".subtype.TopicCalendarDescriptor" />
  
-  <!-- Generic Setup Profile -->
-  <genericsetup:registerProfile
-      name="default"
-      title="Plone4ArtistsCalendar (p4a.plonecalendar)"
-      directory="profiles/default"
-      description="A calendar for plone"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      />
-
   <five:registerPackage package="." />
 
 </configure>

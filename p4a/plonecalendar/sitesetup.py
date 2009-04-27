@@ -18,7 +18,6 @@ def setup_portal(portal):
 
     qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
     qi.installProducts(['Marshall', 'Calendaring'])
-    setup_profile(portal)
     
     subtyper_setup(portal)
     ploneevent_setup(portal)
@@ -45,19 +44,23 @@ def setup_site(site):
         sm.registerUtility(content.CalendarSupport('calendar_support'),
                            interfaces.ICalendarSupport)
 
-def setup_profile(site):
-    setup_tool = site.portal_setup
-    for profile in ['p4a.plonecalendar', 'dateable.chronos']:
-        setup_tool.setImportContext('profile-%s:default' % profile)
-        setup_tool.runAllImportSteps()
-        
-
-def _cleanup_utilities(site):
-    raise NotImplementedError('Current ISiteManager support does not '
-                              'include ability to clean up')
-
-
 def unsetup_portal(portal):
-    count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
-    logger.warn('Removed ICalendarEnhanced interface from %i objects for '
-                'cleanup' % count)
+    # First we need to make sure that object_provides is up to date.
+    # Setting marker interfaces doesn't automatically update the catalog.
+    #portal.portal_catalog.reindexIndex('object_provides')
+    #count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
+    #logger.warn('Removed ICalendarEnhanced interface from %i objects for '
+                #'cleanup' % count)
+    sm = portal.getSiteManager()
+    component = sm.queryUtility(interfaces.ICalendarSupport)
+    
+    # The adapter registry has an internal counter which get out of sync if you register
+    # something multiple times, and the subscriber list can get out of sync. Resync all that.
+    sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''] = (component,)
+    sm.utilities._provided[interfaces.ICalendarSupport] = 2
+    # Now when the registry is sane again, unregister the components:
+    sm.unregisterUtility(component, provided=interfaces.ICalendarSupport)
+    # Verify that there is no trace of the utility:
+    assert(interfaces.IBasicCalendarSupport not in sm.utilities._provided)
+
+    
