@@ -51,7 +51,7 @@ def setup_site(site):
         sm.registerUtility(content.CalendarSupport('calendar_support'),
                            interfaces.ICalendarSupport)
 
-def unsetup_portal(portal):
+def unsetup_portal(portal, reinstall=False):
     sm = portal.getSiteManager()
     component = sm.queryUtility(interfaces.ICalendarSupport)
     
@@ -71,7 +71,10 @@ def unsetup_portal(portal):
     # Verify that there is no trace of the utility:
     del sm.utilities._adapters[0][interfaces.ICalendarSupport]
     del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
-
+    
+    if reinstall:
+        # For reinstalls, this is all we need to do
+        return
     # Now we need to remove all the marker interfaces.
     # First we need to make sure that object_provides is up to date.
     # Setting marker interfaces doesn't automatically update the catalog.
