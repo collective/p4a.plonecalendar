@@ -61,8 +61,16 @@ def unsetup_portal(portal):
     sm.utilities._provided[interfaces.ICalendarSupport] = 2
     # Now when the registry is sane again, unregister the components:
     sm.unregisterUtility(component, provided=interfaces.ICalendarSupport)
+    
+    # Make sure it got removed properly:
+    assert(interfaces.ICalendarSupport not in sm.utilities._provided)
+    assert(not sm.utilities._adapters[0][interfaces.ICalendarSupport])
+    assert(not sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''])
+    
+    # Remove the interface from the lists, or we'll get useless warning messages forever:
     # Verify that there is no trace of the utility:
-    assert(interfaces.IBasicCalendarSupport not in sm.utilities._provided)
+    del sm.utilities._adapters[0][interfaces.ICalendarSupport]
+    del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
 
     # Now we need to remove all the marker interfaces.
     # First we need to make sure that object_provides is up to date.
@@ -78,6 +86,6 @@ def unsetup_portal(portal):
     # (XXX should be done in Chronos, but this is a quick hack)
     from Products.CMFPlone.CalendarTool import CalendarTool
     portal._delObject('portal_calendar')
-    # For some reason, this does not work. I don't know why.
     portal._setObject('portal_calendar', CalendarTool())
+
  
