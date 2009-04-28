@@ -12,6 +12,9 @@ p4a.plonecalendar 2.0a? (xxxx-xx-xx)
 
 * Fixed an issue where a recurring event would show up in TopicEventProvider
   results no matter what the criteria on the topic were. (claytron)
+  
+* Added uninstalling support, which fixes #168. (regebro)
+
 
 p4a.plonecalendar 2.0a2 (2008-10-04)
 ====================================
