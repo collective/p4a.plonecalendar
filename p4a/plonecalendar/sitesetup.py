@@ -1,10 +1,11 @@
+from zope import interface
 from dateable.chronos import interfaces
 from p4a.plonecalendar import content
 from p4a.common import site
 from p4a.z2utils import indexing
 from p4a.z2utils import utils
 from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
-from p4a.subtyper.sitesetup import unsetup_portal as subtyper_unsetup
+from p4a.subtyper.interfaces import ISubtyped
 from p4a.ploneevent.sitesetup import setup_portal as ploneevent_setup
 from Products.CMFCore import utils as cmfutils
 
@@ -80,11 +81,17 @@ def unsetup_portal(portal, reinstall=False):
     # Setting marker interfaces doesn't automatically update the catalog.
     portal.portal_catalog.manage_reindexIndex(('object_provides',))
     # Then we can use the removal utility to unregister all of them:
-    count = utils.remove_marker_ifaces(portal, interfaces.ICalendarEnhanced)
+    count = 0
+    for obj in utils.objs_with_iface(portal, interfaces.ICalendarEnhanced):
+        provided = interface.directlyProvidedBy(obj)
+        # Remove ICalendarEnhanced and ISubtyped:
+        provided -= interfaces.ICalendarEnhanced
+        provided -= ISubtyped
+        interface.directlyProvides(obj, provided)
+        count += 1
     logger.warn('Removed ICalendarEnhanced interface from %i objects for '
                 'cleanup' % count)
     
-    subtyper_unsetup(portal, reindex=False)
     # Remove the chronos calendar tool and put the old one back:
     # (XXX should be done in Chronos, but this is a quick hack)
     from Products.CMFPlone.CalendarTool import CalendarTool
