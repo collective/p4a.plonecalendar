@@ -4,7 +4,7 @@
 p4a.plonecalendar Changes
 =========================
 
-p4a.plonecalendar 2.0a? (xxxx-xx-xx)
+p4a.plonecalendar 2.0a3 (2009-05-17)
 ====================================
 
 * Fixed issue where a TopicEventProvider died on topics with no criteria. This
@@ -15,7 +15,19 @@ p4a.plonecalendar 2.0a? (xxxx-xx-xx)
   
 * Added uninstalling support, which fixes #168. (regebro)
 
+* Updated wording to be consistent with other iCal/vCal actions. 
+ (aaronvanderlip)
 
+* Fixed an issue where a recurring event would show up in TopicEventProvider 
+  results no matter what the criteria on the topic were. (lucielejard)
+
+* Fixed Trac #138 (fixing daily 'Add...' link so it defaults start/end dates 
+  to the proper day) by building a portal_factory link with startDate and 
+  endDate query string parameters for each day. (brianfive)
+
+* Re-enabled the import UI by adding beforecontent viewlet that shows 
+  icon and link. (aaronvanderlip)
+  
 p4a.plonecalendar 2.0a2 (2008-10-04)
 ====================================
 
