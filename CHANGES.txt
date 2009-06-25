@@ -3,6 +3,10 @@
 =========================
 p4a.plonecalendar Changes
 =========================
+p4a.plonecalendar 2.0a4 (2009-06-25)
+====================================
+
+* Removed p4a.ploneevent as a dependency. It's not required. (regebro)
 
 p4a.plonecalendar 2.0a3 (2009-05-17)
 ====================================
