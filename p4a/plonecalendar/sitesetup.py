@@ -6,7 +6,6 @@ from p4a.z2utils import indexing
 from p4a.z2utils import utils
 from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
 from p4a.subtyper.interfaces import ISubtyped
-from p4a.ploneevent.sitesetup import setup_portal as ploneevent_setup
 from Products.CMFCore import utils as cmfutils
 
 import logging
@@ -23,7 +22,6 @@ def setup_portal(portal):
     setup_profile(portal)
     
     subtyper_setup(portal)
-    ploneevent_setup(portal)
 
 def setup_profile(site):
     setup_tool = site.portal_setup
