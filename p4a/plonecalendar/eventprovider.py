@@ -290,7 +290,13 @@ class RecurringBrainEvent(BrainEvent):
         if stop is not None:
             stopdate = stop.toordinal()
         event = self._getEvent()
-        recurrence = kalends.IRecurrence(event)
+        try:
+            recurrence = kalends.IRecurrence(event)
+        except TypeError:
+            # Could not adapt to IRecurrence, which means no recurrence
+            # support is installed.
+            return []
+        
         res = []
 
         for each in recurrence.getOccurrenceDays():
