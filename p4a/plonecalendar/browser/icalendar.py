@@ -2,7 +2,8 @@ import urllib2
 from StringIO import StringIO
 from zope import interface
 from Products.CMFCore.utils import getToolByName
-from dateable.kalends import IEventProvider
+from dateable.kalends import IEventProvider, IWebEventCreator
+from plone.memoize import view
 
 
 class IiCalendarView(interface.Interface):
@@ -25,20 +26,21 @@ class iCalendarView(object):
 
     interface.implements(IiCalendarView)
 
+    @view.memoize
     def has_ical_support(self):
-        cached = getattr(self, '__cached_ical_support', None)
-        if cached is not None:
-            return cached
+        if self.__name__ == 'import.html':
+            # Check that we are not read only.
+            provider = IWebEventCreator(self.context)
+            if not provider.canCreate():
+                return False
 
+        # Now check that Calendaring is installed properly.
         ct = getToolByName(self, 'portal_calendar')
         try:
             ct.exportCalendar(events=[])
-            cached = True
+            return True
         except TypeError, e:
-            cached = False
-
-        self.__cached_ical_support = cached
-        return cached
+            return False
 
     def exportCalendar(self, REQUEST=None):
         """ Export the contents of this Calendar as an iCalendar file """

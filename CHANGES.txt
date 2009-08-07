@@ -4,6 +4,12 @@
 p4a.plonecalendar Changes
 =========================
 
+p4a.plonecalendar 2.0a6 (2009-08-07)
+====================================
+
+* The import link is no longer shown in Topics. (regebro)
+
+
 p4a.plonecalendar 2.0a5 (2009-07-05)
 ====================================
 

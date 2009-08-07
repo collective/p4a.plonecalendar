@@ -34,6 +34,7 @@ setup(name='p4a.plonecalendar',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'plone.memoize',
           'dateable.chronos',
           'dateable.kalends',
           'p4a.calendar >= 1.2dev',
