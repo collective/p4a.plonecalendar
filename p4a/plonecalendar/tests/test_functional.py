@@ -6,7 +6,7 @@ from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase import layer
 from Products.PloneTestCase.setup import portal_owner, default_password
 
-PloneTestCase.setupPloneSite(products=['p4a.plonecalendar'])
+PloneTestCase.setupPloneSite(products=['dateable.chronos'])
 
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
@@ -26,7 +26,11 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.getLink('Folder').click()
         form = browser.getForm('folder-base-edit')
         form.getControl(name='title').value = 'A Calendar'
-        form.getControl(name='form_submit').click()
+        if 'form_submit' in browser.contents:
+            self.submit_name = 'form_submit'
+        else:
+            self.submit_name = 'form.button.save'
+        form.getControl(name=self.submit_name).click()
         link = browser.getLink(id='ICalendarEnhanced')
         link.click()
         self.failUnless("Changed subtype to Calendar" in browser.contents)
@@ -35,7 +39,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.getLink('Collection').click()
         form = browser.getForm('topic-base-edit')
         form.getControl(name='title').value = 'A Calendar Collection'
-        form.getControl(name='form_submit').click()
+        form.getControl(name=self.submit_name).click()
         link = browser.getLink(id='ICalendarEnhanced')
         link.click()
         self.failUnless("Changed subtype to Calendar" in browser.contents)
@@ -105,7 +109,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form.getControl(name='endDate_day').value = ['01']
         form.getControl(name='endDate_hour').value = ['11']
         form.getControl(name='endDate_minute').value = ['00']
-        form.getControl(name='form_submit').click()
+        form.getControl(name=self.submit_name).click()
         self.failUnless('an-event' in browser.url)
 
         # Check that it still works:
@@ -170,7 +174,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form.getControl(name='endDate_minute').value = ['00']
         # Make it recur.
         form.getControl(name='frequency').value = ['1']
-        form.getControl(name='form_submit').click()
+        form.getControl(name=self.submit_name).click()
         
         browser.getLink("A Calendar").click()
         folder_url = browser.url
