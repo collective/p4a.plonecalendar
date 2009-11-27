@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.0a5'
+version = '2.0a7dev'
 
 f = open('README.txt')
 readme = f.read()

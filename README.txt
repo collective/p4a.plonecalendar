@@ -4,8 +4,6 @@
  p4a.plonecalendar
 ===================
 
-TODO: Add some info here about how to install with buildout and what the dependencies are (see setup.py)
-
 Overview
 ========
 
@@ -14,21 +12,20 @@ run natively within a Plone environment.  It contains the extensions that
 require Plone, and the adaptions to Plone. This is mainly support for Plone
 event types and iCalendar import/export.
 
+Requirements
+============
+Plone 3.x. Tested with 3.2 and 3.3 but may work with other versions.
 
 Installation
 ============
 
-  1. When you're reading this you have probably already run 
-     ``easy_install p4a.plonecalendar``. Find out how to install setuptools
-     (and EasyInstall) here:
-     http://peak.telecommunity.com/DevCenter/EasyInstall
-
-  2. Create a file called ``p4a.plonecalendar-configure.zcml`` in the
-     ``/path/to/instance/etc/package-includes`` directory.  The file
-     should only contain this::
-
-       <include package="p4a.plonecalendar" />
-
+1. Add p4a.plonecalendar as a dependency either to your buildout:
+      [buildout]
+      eggs = p4a.plonecalendar
+      
+2. Include p4a.plonecalendar ZCML:
+      [instance]
+      zcml = p4a.plonecalendar
 
 Notes
 =====
