@@ -1,0 +1,56 @@
+# Gettext Message File for p4a.plonecalendar.
+# Simon Käser <skaeser@raptus.com>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: p4a.plonecalendar\n"
+"POT-Creation-Date: 2009-12-01 10:26+0000\n"
+"PO-Revision-Date: 2009-12-01 10:26+0000\n"
+"Last-Translator: Simon Käser <skaeser@raptus.com>\n"
+"Language-Team: Plone developers <plone-developers@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Code: de\n"
+"Language-Name: German\n"
+"Preferred-Encodings: utf-8\n"
+"Domain: p4a.plonecalendar\n"
+
+#: ./browser/icalendar.py:103
+msgid "${items} items imported"
+msgstr "${items} Objekte importiert"
+
+#: ./browser/icalendar.py:82
+msgid "Calendaring product not installed."
+msgstr "Kalender Produkt nicht installiert"
+
+#. Default: "Import iCalendar URL"
+#: ./browser/icalendar_import.pt:25
+msgid "Import iCalendar URL"
+msgstr "Import iCalendar URL"
+
+#. Default: "Import iCalendar file"
+#: ./browser/icalendar_import.pt:4
+msgid "Import iCalendar file"
+msgstr "Import iCalendar Datei"
+
+#. Default: "Filename:"
+#: ./browser/icalendar_import.pt:10
+msgid "filename_label"
+msgstr "Dateiname"
+
+#. Default: "import iCal"
+#: ./browser/navigation.pt:5
+msgid "import iCal"
+msgstr "iCal importieren"
+
+#. Default: "submit"
+#: ./browser/icalendar_import.pt:19
+msgid "submit"
+msgstr "abschicken"
+
+#. Default: "URL:"
+#: ./browser/icalendar_import.pt:31
+msgid "url_label"
+msgstr "URL:"
+

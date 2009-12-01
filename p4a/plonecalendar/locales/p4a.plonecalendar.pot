@@ -1,0 +1,57 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2009-12-01 10:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: p4a.plonecalendar\n"
+
+#: ./browser/icalendar.py:103
+msgid "${items} items imported"
+msgstr ""
+
+#: ./browser/icalendar.py:82
+msgid "Calendaring product not installed."
+msgstr ""
+
+#. Default: "Import iCalendar URL"
+#: ./browser/icalendar_import.pt:25
+msgid "Import iCalendar URL"
+msgstr ""
+
+#. Default: "Import iCalendar file"
+#: ./browser/icalendar_import.pt:4
+msgid "Import iCalendar file"
+msgstr ""
+
+#. Default: "Filename:"
+#: ./browser/icalendar_import.pt:10
+msgid "filename_label"
+msgstr ""
+
+#. Default: "import iCal"
+#: ./browser/navigation.pt:5
+msgid "import iCal"
+msgstr ""
+
+#. Default: "submit"
+#: ./browser/icalendar_import.pt:19
+msgid "submit"
+msgstr ""
+
+#. Default: "URL:"
+#: ./browser/icalendar_import.pt:31
+msgid "url_label"
+msgstr ""
+

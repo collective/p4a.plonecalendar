@@ -4,12 +4,19 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:zcml="http://namespaces.zope.org/zcml"
-    i18n_domain="Plone4Artists">
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="p4a.plonecalendar">
  
   <include package="p4a.z2utils" />
   <include package="p4a.common" />
   <include package="p4a.subtyper" />
   <include package="dateable.chronos" />
+
+  <i18n:registerTranslations directory="locales" />
+
+  <utility 
+      component=".calendardomain"
+      name="p4a.plonecalendar" />
 
   <browser:resourceDirectory
       name="p4aplonecalendar"

@@ -1,5 +1,5 @@
 <tal:block replace="view/importFormHandler"/>
-<html metal:use-macro="context/@@standard_macros/page" i18n:domain="calendar">
+<html metal:use-macro="context/@@standard_macros/page" i18n:domain="p4a.plonecalendar">
   <body metal:fill-slot="body">
     <h1 i18n:translate="">Import iCalendar file</h1>
     <form tal:attributes="action request/URL" method="post"

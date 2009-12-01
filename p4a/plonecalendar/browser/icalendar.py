@@ -5,6 +5,10 @@ from Products.CMFCore.utils import getToolByName
 from dateable.kalends import IEventProvider, IWebEventCreator
 from plone.memoize import view
 
+from zope.i18n import translate
+from zope.i18nmessageid import MessageFactory
+_ = MessageFactory("p4a.plonecalendar")
+
 
 class IiCalendarView(interface.Interface):
 
@@ -75,7 +79,7 @@ class iCalendarView(object):
 
     def import_from_url(self, url):
         if not self.has_ical_support():
-            return "Calendaring product not installed."
+            return translate(_("Calendaring product not installed."), context=self.request)
         res = urllib2.urlopen(url)
         text = '\n'.join(res.readlines())
         # Make sure it really is UTF8, to avoid failure later:
@@ -96,11 +100,11 @@ class iCalendarView(object):
         ical = StringIO(text)
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
-        return "%s items imported" % len(items)
+        return translate(_("${items} items imported", mapping=dict(items=len(items))), context=self.request)
 
     def import_from_hcal(self, url):
         if not self.has_ical_support():
-            return "Calendaring product not installed."
+            return translate(_("Calendaring product not installed."), context=self.request)
 
         import os
         import Globals
@@ -125,15 +129,14 @@ class iCalendarView(object):
         ical = StringIO(transform.tostring(result))
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
-        return "%s items imported" % len(items)
+        return translate(_("${items} items imported", mapping=dict(items=len(items))), context=self.request)
 
     def importFormHandler(self):
         if self.request.get('file') is not None:
             ct = getToolByName(self.context, 'portal_calendar')
             items = ct.importCalendar(self.request.get('file'),
                                       dest=self.context, do_action=True)
-            self.request.portal_status_message = "%s items imported" \
-                                                 % len(items)
+            self.request.portal_status_message = translate(_("${items} items imported", mapping=dict(items=len(items))), context=self.request)
         if self.request.get('url') is not None:
             self.request.portal_status_message = \
                 self.import_from_url(self.request.get('url'))
