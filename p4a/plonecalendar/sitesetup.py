@@ -54,22 +54,23 @@ def unsetup_portal(portal, reinstall=False):
     sm = portal.getSiteManager()
     component = sm.queryUtility(interfaces.ICalendarSupport)
     
-    # The adapter registry has an internal counter which get out of sync if you register
-    # something multiple times, and the subscriber list can get out of sync. Resync all that.
-    sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''] = (component,)
-    sm.utilities._provided[interfaces.ICalendarSupport] = 2
-    # Now when the registry is sane again, unregister the components:
-    sm.unregisterUtility(component, provided=interfaces.ICalendarSupport)
-    
-    # Make sure it got removed properly:
-    assert(interfaces.ICalendarSupport not in sm.utilities._provided)
-    assert(not sm.utilities._adapters[0][interfaces.ICalendarSupport])
-    assert(not sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''])
-    
-    # Remove the interface from the lists, or we'll get useless warning messages forever:
-    # Verify that there is no trace of the utility:
-    del sm.utilities._adapters[0][interfaces.ICalendarSupport]
-    del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
+    if component is not None:
+        # The adapter registry has an internal counter which get out of sync if you register
+        # something multiple times, and the subscriber list can get out of sync. Resync all that.
+        sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''] = (component,)
+        sm.utilities._provided[interfaces.ICalendarSupport] = 2
+        # Now when the registry is sane again, unregister the components:
+        sm.unregisterUtility(component, provided=interfaces.ICalendarSupport)
+        
+        # Make sure it got removed properly:
+        assert(interfaces.ICalendarSupport not in sm.utilities._provided)
+        assert(not sm.utilities._adapters[0][interfaces.ICalendarSupport])
+        assert(not sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''])
+        
+        # Remove the interface from the lists, or we'll get useless warning messages forever:
+        # Verify that there is no trace of the utility:
+        del sm.utilities._adapters[0][interfaces.ICalendarSupport]
+        del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
     
     if reinstall:
         # For reinstalls, this is all we need to do
