@@ -41,9 +41,19 @@
   <adapter factory=".eventprovider.RecurringBrainEvent" 
            provides="dateable.kalends.ITimezonedRecurringEvent" />
 
+  <!-- Zope 2.9 -->
   <subscriber
+      zcml:condition="installed zope.app.event.interfaces.IObjectModifiedEvent"
       for="dateable.chronos.interfaces.ICalendarEnhanced
            zope.app.event.interfaces.IObjectModifiedEvent"
+      handler=".update_catalog"
+      />
+
+  <!-- Zope >= 2.10 -->
+  <subscriber
+      zcml:condition="installed zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      for="dateable.chronos.interfaces.ICalendarEnhanced
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".update_catalog"
       />
 
