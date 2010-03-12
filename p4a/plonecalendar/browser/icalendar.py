@@ -39,7 +39,7 @@ class iCalendarView(object):
         try:
             ct.exportCalendar(events=[])
             return True
-        except TypeError, e:
+        except TypeError:
             return False
 
     def exportCalendar(self, REQUEST=None):

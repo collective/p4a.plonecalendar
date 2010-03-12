@@ -25,60 +25,60 @@ class EventProviderTestMixin(object):
     these tests must be mixed in with a text that provides an
     event provider as self.provider in the setUp.
     """
-    
+
     def test_interface(self):
         verifyObject(dateable.kalends.IEventProvider, self.provider)
-        
+
     def test_gather_all(self):
         all_events = list(self.provider.getOccurrences())
         gathered_events = list(self.provider.getOccurrences())
 
         self.failUnlessEqual(len(all_events), len(gathered_events))
-        
+
         for i in all_events:
             verifyObject(dateable.kalends.IOccurrence, i)
             exists = 0
             for j in gathered_events:
-                if (i.title == j.title and 
+                if (i.title == j.title and
                     i.start == j.start and
                     i.end   == j.end):
                     exists = True
                     break
             self.failUnless(exists, "Event lists are not equal")
-                    
-        
+
+
     def test_gather_future(self):
         all_events = list(self.provider.getOccurrences())
         if len(all_events) < 2:
             raise ValueError(
                 "This test requires you to have at least two events "
                 "with non overlapping start and end times.")
-        
+
         # Pick out all the end datetimes for the events:
         end_times = [x.end for x in all_events]
         end_times.sort()
         # Pick an end date in the middle:
         dt = end_times[len(all_events)/2]
-        
+
         # Get all dates starting at or after this middle date
         gathered_events = list(self.provider.getOccurrences(start=dt))
-        
+
         for i in all_events:
             # The event should be returned if the end_date is above
             # the date given as a start date.
             should_exist = i.end >= dt
-            
+
             # Now check if it exists:
             exists = False
             for j in gathered_events:
-                if (i.title == j.title and 
+                if (i.title == j.title and
                     i.start == j.start and
                     i.end   == j.end):
                     exists = True
                     break
-            self.failUnlessEqual(exists, should_exist, 
+            self.failUnlessEqual(exists, should_exist,
                                  "Event lists are not as expected")
-        
+
     def test_title_search(self):
         # This test assumes at least one event, but not all of them
         # has the text "event" in the title.
@@ -89,7 +89,7 @@ class EventProviderTestMixin(object):
         self.failUnless(gathered_events)
         # But not everything
         self.failIfEqual(len(all_events), len(gathered_events))
-        
+
         for i in gathered_events:
             self.failIf(i.title.lower().find('event') == -1)
 
@@ -105,15 +105,15 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
         # Create folder.
         self.folder.invokeFactory('Folder', id='calendar-folder')
         cal = self.folder['calendar-folder']
-        id = cal.invokeFactory('Event', id='event1')
+        cal.invokeFactory('Event', id='event1')
         cal['event1'].update(title='First Event',
                              startDate=DateTime('2006-09-28 08:30am GMT+0'),
                              endDate=DateTime('2006-09-28 09:30am GMT+0'))
-        id = cal.invokeFactory('Event', id='event2')
+        cal.invokeFactory('Event', id='event2')
         cal['event2'].update(title='Second Event',
                              startDate=DateTime('2006-09-29 08:30am GMT+0'),
                              endDate=DateTime('2006-09-29 09:30am GMT+0'))
-        id = cal.invokeFactory('Event', id='meeting1')
+        cal.invokeFactory('Event', id='meeting1')
         # Calling this event "Meeting" is just to have one event that does
         # not have the word "Event" in the title.
         cal['meeting1'].update(title='First Meeting',
@@ -123,7 +123,7 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
         # Activate calendaring capabilities on this folder
         config = ICalendarConfig(cal)
         config.calendar_activated = True
-        
+
     def afterSetUp(self):
         CalendarTestCase.afterSetUp(self)
         self.eventSetUp()
@@ -137,7 +137,7 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
 
 
 class TopicEventProviderTest(ATEventProviderTest):
-    
+
     def afterSetUp(self):
         self.eventSetUp()
         self.loginAsPortalOwner()
@@ -164,7 +164,7 @@ class TopicEventProviderTest(ATEventProviderTest):
         date_crit.setValue(0)
         date_crit.setDateRange('+')
         date_crit.setOperation('more')
-        
+
         # Adding a criteria other than time
         subject_crit = self.topic.addCriterion('Subject', 'ATListCriterion')
         subject_crit.setValue(['foo', 'bar'])
@@ -182,14 +182,14 @@ class TopicEventProviderTest(ATEventProviderTest):
         start = datetime.now()
         stop = start + timedelta(seconds=3600)
         self.provider.getEvents(start=start, stop=stop)
-        
+
         # XXX I don't like this test, it has too much internal knowledge.
         # Better to add more functional tests.
         self.assertEqual(len(calls), 2)
         # test to make sure that the recurrence search still has the extra
         # parameters in it
         self.failIf('Subject' not in calls[1].keys())
-        
+
         # We don't mind the timezone at this point:
         self.assertEqual(calls[0]['end']['query'].strftime('%Y%m%d %H:%M'),
                          start.strftime('%Y%m%d %H:%M'))
@@ -205,22 +205,22 @@ class LocationFilterTest(CalendarTestCase):
         # Activate calendaring capabilities on this folder
         config = ICalendarConfig(calendarfolder)
         config.calendar_activated = True
-        
+
     def testLocationFilter(self):
         calendar = self.folder.calendarfolder
         view = calendar.unrestrictedTraverse('month.html')
         filter_html = view.render_filter()
         self.failUnlessEqual(filter_html, '')
-        catalog = self.folder.portal_catalog.addIndex('location', 'FieldIndex')
+        self.folder.portal_catalog.addIndex('location', 'FieldIndex')
         filter_html = view.render_filter()
         self.failUnless(filter_html.startswith('<span class="filter">'))
-        
+
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
-    
+
     def afterSetUp(self):
         ZopeTestCase.utils.setupCoreSessions(self.app)
-    
+
     def test_ui(self):
         from Products.Five.testbrowser import Browser
         browser = Browser()
@@ -237,7 +237,7 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         link = browser.getLink(id='ICalendarEnhanced')
         link.click()
         self.failUnless("Changed subtype to Calendar" in browser.contents)
-        
+
         # Create an event:
         browser.getLink(id='event').click()
         form = browser.getForm('event-base-edit')
@@ -254,19 +254,19 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form.getControl(name='endDate_minute').value = ['00']
         form.getControl(name='form_submit').click()
         self.failUnless('an-event' in browser.url)
-        
+
         # Make it recur.
         link = browser.getLink(id='IRecurringEvent')
         link.click()
         self.failUnless("Changed subtype to Recurring Event" in browser.contents)
-        
+
         # Edit the recurrence info:
         link = browser.getLink('Edit')
         link.click()
         form = browser.getForm('event-base-edit')
         form.getControl(name='frequency').value = ['1']
         form.getControl(name='form_submit').click()
-        
+
         browser.getLink("A Calendar").click()
         folder_url = browser.url
         browser.open(folder_url + '?date=2007-04-01')
