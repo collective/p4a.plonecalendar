@@ -1,5 +1,3 @@
-;-*-rst-*-
-
 ===================
  p4a.plonecalendar
 ===================
@@ -22,7 +20,7 @@ Installation
 1. Add p4a.plonecalendar as a dependency either to your buildout:
       [buildout]
       eggs = p4a.plonecalendar
-      
+
 2. Include p4a.plonecalendar ZCML:
       [instance]
       zcml = p4a.plonecalendar
@@ -40,7 +38,7 @@ that you also want to present or integrate into your site.
 An example url for importing an icalendar file over http is::
 
   http://path/to/calendar/import_from_url?url=http://url/to/icalendarfile.ics
-  
+
 This will open up a connection to the other site, get the icalendar file
 called "icalendarfile.ics" and import it into the folder located at 
 /path/to/calendar/
