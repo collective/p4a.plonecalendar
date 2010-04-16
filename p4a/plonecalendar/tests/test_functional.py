@@ -1,12 +1,27 @@
 from unittest import TestSuite, makeSuite
 from Testing import ZopeTestCase
 
-from Products.Five.testbrowser import Browser        
+from Products.Five.testbrowser import Browser
+from Products.Five import zcml
 from Products.PloneTestCase import PloneTestCase
-from Products.PloneTestCase import layer
+from Products.PloneTestCase.layer import onsetup
 from Products.PloneTestCase.setup import portal_owner, default_password
 
-PloneTestCase.setupPloneSite(products=['dateable.chronos'])
+@onsetup
+def load_zcml():
+    import p4a.plonecalendar
+    zcml.load_config('configure.zcml', p4a.plonecalendar)
+
+load_zcml()
+
+# install p4a.subtyper profile only on Zope >= 2.10
+try:
+    from zope.app.annotation import tests
+except ImportError:
+    profiles = ('p4a.subtyper:default',)
+else:
+    profiles = ()
+PloneTestCase.setupPloneSite(products=['dateable.chronos'], extension_profiles=profiles)
 
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
@@ -187,6 +202,5 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
 def test_suite():
     suite = TestSuite()
     suite.addTests(makeSuite(TestFunctional))
-    suite.layer = layer.ZCMLLayer
 
     return suite
