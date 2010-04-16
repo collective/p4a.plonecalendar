@@ -5,6 +5,8 @@ Changelog
 2.0a7dev (xxxx-xx-xx)
 -----------------------
 
+- Update profile installation to work with GenericSetup 1.6.x. [davisagli]
+
 - Made IObjectModifiedEvent import location conditional for compatibility with
   Zope 2.12. [tom_gross]
 

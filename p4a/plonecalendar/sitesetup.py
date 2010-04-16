@@ -26,9 +26,13 @@ def setup_portal(portal):
 def setup_profile(site):
     setup_tool = site.portal_setup
     for profile in ['dateable.chronos']:
-        setup_tool.setImportContext('profile-%s:default' % profile)
-        setup_tool.runAllImportSteps()
- 
+        profile = 'profile-%s:default' % profile
+        try:
+            setup_tool.runAllImportStepsFromProfile(profile)
+        except AttributeError: # BBB GenericSetup 1.4
+            setup_tool.setImportContext('profile-%s:default' % profile)
+            setup_tool.runAllImportSteps()
+
 def setup_site(site):
     """Install all necessary components and configuration into the
     given site.
