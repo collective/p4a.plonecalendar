@@ -5,8 +5,8 @@ Changelog
 2.0a7dev (xxxx-xx-xx)
 -----------------------
 
-- Nothing yet
-
+- Made IObjectModifiedEvent import location conditional for compatibility with
+  Zope 2.12. [tom_gross]
 
 2.0a6 (2009-08-07)
 ------------------
