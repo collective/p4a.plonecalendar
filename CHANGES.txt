@@ -2,8 +2,8 @@ Changelog
 =========
 
 
-2.0a7dev (xxxx-xx-xx)
------------------------
+2.0a7 (2010-08-01)
+------------------
 
 - Update profile installation to work with GenericSetup 1.6.x. [davisagli]
 
