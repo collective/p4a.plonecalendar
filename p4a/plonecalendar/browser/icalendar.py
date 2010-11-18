@@ -1,6 +1,7 @@
 import urllib2
 from StringIO import StringIO
 from zope import interface
+from Products.Archetypes.utils import addStatusMessage
 from Products.CMFCore.utils import getToolByName
 from p4a.calendar.interfaces import IEventProvider
 
@@ -120,10 +121,18 @@ class iCalendarView(object):
     def importFormHandler(self):
         if self.request.get('file') is not None:
             ct = getToolByName(self.context, 'portal_calendar')
-            items = ct.importCalendar(self.request.get('file'), dest=self.context, do_action=True)
-            self.request.portal_status_message = "%s items imported" % len(items)
+            items = ct.importCalendar(
+                        self.request.get('file'), 
+                        dest=self.context, 
+                        do_action=True
+                        )
+            addStatusMessage(self.request, "%s items imported" % len(items))
+
         if self.request.get('url') is not None:
-            self.request.portal_status_message = self.import_from_url(self.request.get('url'))
+            addStatusMessage(
+                        self.request, 
+                        self.import_from_url(self.request.get('url'))
+                        )
         
         
  
