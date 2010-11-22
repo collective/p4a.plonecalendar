@@ -28,7 +28,7 @@ class iCalendarView(object):
         if cached is not None:
             return cached
         
-        ct = getToolByName(self, 'portal_calendar')
+        ct = getToolByName(self.context, 'portal_calendar')
         try:
             ct.exportCalendar(events=[])
             cached = True
