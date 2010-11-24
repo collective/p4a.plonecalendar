@@ -1,4 +1,5 @@
 import urllib2
+import codecs
 from StringIO import StringIO
 from zope import interface
 from Products.Archetypes.utils import addStatusMessage
@@ -85,6 +86,10 @@ class iCalendarView(object):
                 # We have no idea, what this is, so lets just reencode it
                 # as UTF8 and replace everything weird with <?>.
                 text = text.encode('utf8', 'replace').encode('utf8', 'replace')
+
+        # Remove the BOM
+        if text.startswith(codecs.BOM_UTF8):
+            text = text[len(codecs.BOM_UTF8):]
                 
         ical = StringIO(text)
         ct = getToolByName(self.context, 'portal_calendar')
@@ -113,16 +118,22 @@ class iCalendarView(object):
         remote_page = urllib2.urlopen(url)
         parsed_page = etree.parse(remote_page)
         result = transform.apply(parsed_page)
-        ical = StringIO(transform.tostring(result))
+
+        ical = StringIO(text)
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
         return "%s items imported" % len(items)
     
     def importFormHandler(self):
         if self.request.get('file') is not None:
+            text = self.request.get('file').read()
+            # Remove the BOM
+            if text.startswith(codecs.BOM_UTF8):
+                text = text[len(codecs.BOM_UTF8):]
+            ical = StringIO(text)
             ct = getToolByName(self.context, 'portal_calendar')
             items = ct.importCalendar(
-                        self.request.get('file'), 
+                        ical,
                         dest=self.context, 
                         do_action=True
                         )
