@@ -30,6 +30,7 @@ Plone CMS.""",
           'p4a.common>=1.0.1',
       ],
       entry_points="""
-      # -*- Entry points: -*-
+        [z3c.autoinclude.plugin]
+        target = plone
       """,
       )
