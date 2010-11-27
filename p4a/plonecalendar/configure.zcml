@@ -11,6 +11,16 @@
   <include package="p4a.calendar" />
   <include package="p4a.subtyper" />
 
+  <!-- Generic Setup Profile -->
+  <genericsetup:registerProfile
+      name="default"
+      title="p4a.plonecalendar"
+      directory="profiles/default"
+      description="A calendar for plone"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+
   <browser:resourceDirectory
       name="p4aplonecalendar"
       directory="browser/resources"
@@ -61,16 +71,6 @@
   <utility
       name="p4a.plonecalendar.TopicCalendar"
       factory=".subtype.TopicCalendarDescriptor" />
- 
-  <!-- Generic Setup Profile -->
-  <genericsetup:registerProfile
-      name="default"
-      title="P4A Calendar"
-      directory="profiles/default"
-      description="A calendar for plone"
-      provides="Products.GenericSetup.interfaces.EXTENSION"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      />
       
   <!-- Plone 2.5 support -->
   <configure zcml:condition="installed zope.app.annotation.tests">
