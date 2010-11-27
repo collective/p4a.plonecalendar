@@ -1,6 +1,6 @@
+import unittest
 from datetime import datetime
 from DateTime import DateTime
-from Testing import ZopeTestCase
 import p4a.common
 import p4a.calendar
 import p4a.plonecalendar
@@ -130,7 +130,6 @@ def test_suite():
     os.environ['TZ'] = 'Europe/Paris'
     time.tzset()
     
-    
     suite = TestSuite()
     suite.addTest(doctest.DocTestSuite('p4a.plonecalendar.utils',
                                        optionflags=doctest.ELLIPSIS))
@@ -143,5 +142,9 @@ def test_suite():
     suite.addTests(makeSuite(TopicEventProviderTest))
     suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
-
     return suite
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')
+
+
