@@ -2,6 +2,11 @@
 p4a.plonecalendar Changes
 =========================
 
+1.1.2 (2010-11-27)
+==================
+
+* Remove BOM (byte order mark) from calendar's ICS files. [jcbrand]
+
 p4a.plonecalendar 1.1 (2008-04-12)
 ==================================
 
