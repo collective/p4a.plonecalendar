@@ -5,7 +5,9 @@ Changelog
 2.0a8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added support for i18n [macagua]
+
+- Added support for Spanisn translation [macagua]
 
 
 2.0a7 (2010-08-01)
