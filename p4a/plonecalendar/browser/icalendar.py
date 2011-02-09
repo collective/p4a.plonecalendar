@@ -4,7 +4,7 @@ from zope import interface
 from Products.CMFCore.utils import getToolByName
 from dateable.kalends import IEventProvider, IWebEventCreator
 from plone.memoize import view
-
+from p4a.plonecalendar import P4ACalendarMF as _
 
 class IiCalendarView(interface.Interface):
 
@@ -96,7 +96,7 @@ class iCalendarView(object):
         ical = StringIO(text)
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
-        return "%s items imported" % len(items)
+        return _(u"%s items imported") % len(items)
 
     def import_from_hcal(self, url):
         if not self.has_ical_support():
@@ -125,14 +125,14 @@ class iCalendarView(object):
         ical = StringIO(transform.tostring(result))
         ct = getToolByName(self.context, 'portal_calendar')
         items = ct.importCalendar(ical, dest=self.context, do_action=True)
-        return "%s items imported" % len(items)
+        return _(u"%s items imported") % len(items)
 
     def importFormHandler(self):
         if self.request.get('file') is not None:
             ct = getToolByName(self.context, 'portal_calendar')
             items = ct.importCalendar(self.request.get('file'),
                                       dest=self.context, do_action=True)
-            self.request.portal_status_message = "%s items imported" \
+            self.request.portal_status_message = _(u"%s items imported") \
                                                  % len(items)
         if self.request.get('url') is not None:
             self.request.portal_status_message = \

@@ -2,6 +2,10 @@ import pkg_resources
 from dateable.chronos import interfaces
 from Acquisition import aq_inner, aq_parent
 
+# Import "MessageFactory" to create messages in the calendar domain
+from zope.i18nmessageid import MessageFactory
+P4ACalendarMF = MessageFactory('calendar')
+
 VERSION = pkg_resources.get_distribution('p4a.plonecalendar').version
 
 

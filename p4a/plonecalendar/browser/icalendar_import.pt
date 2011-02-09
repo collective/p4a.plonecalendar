@@ -19,7 +19,8 @@
             <input type="submit" name="SUBMIT" value="submit"
               i18n:attributes="value" />
           </td>
-        </tr>        
+        </tr>
+      </table>        
     </form>
 
     <h1 i18n:translate="">Import iCalendar URL</h1>
@@ -41,6 +42,7 @@
               i18n:attributes="value" />
           </td>
         </tr> 
+      </table>
     </form>
 
   </body>

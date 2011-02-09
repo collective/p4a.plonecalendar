@@ -1,6 +1,6 @@
-<div tal:condition="context/@@import.html/has_ical_support">
-<a href="import.html"><img class="navigationIcon" src="#"
+<div tal:condition="context/@@import.html/has_ical_support" i18n:domain="calendar">
+<a href="import.html"><img class="navigationIcon" src="#" alt="import iCal" i18n:attributes="alt;"
    tal:attributes="src string:${context/++resource++p4aplonecalendar/icon_import_ical.png}"  />
 </a>
-<a href="import.html">import iCal</a>
+<a href="import.html" i18n:translate="">import iCal</a>
 </div>

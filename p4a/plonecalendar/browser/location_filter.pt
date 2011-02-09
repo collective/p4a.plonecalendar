@@ -1,4 +1,4 @@
-<span class="filter">
+<span class="filter" i18n:domain="calendar">
 <form method="post" tal:attributes="action options/provider/url">  
   <tal:block repeat="field options/provider/hidden_fields">
     <input type="hidden" tal:attributes="name field/name;value field/value"/>
@@ -9,6 +9,6 @@
        tal:content="location" 
        tal:attributes="selected python:location==selected" />
   </select>
-  <input class="form-element" name="submit" value=" Filter " type="submit">
+  <input class="form-element" name="submit" value=" Filter " type="submit" i18n:attributes="value" />
 </form>
 </span>

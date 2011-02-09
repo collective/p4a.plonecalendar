@@ -1,13 +1,13 @@
 from zope import interface
 from dateable.chronos import interfaces
 from p4a.subtyper.interfaces import IPortalTypedFolderishDescriptor
-
+from p4a.p4a.plonecalendar import P4ACalendarMF as _
 
 class AbstractCalendarDescriptor(object):
     interface.implements(IPortalTypedFolderishDescriptor)
 
-    title = u'Calendar'
-    description = u'A folder that holds event objects'
+    title = _(u'Calendar')
+    description = _(u'A folder that holds event objects')
     type_interface = interfaces.ICalendarEnhanced
     icon = '++resource++chronos_support/calendar_icon.gif'
 

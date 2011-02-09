@@ -1,0 +1,62 @@
+# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
+# SOME DESCRIPTIVE TITLE.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-02-09 19:56+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: calendar\n"
+
+#. Default: "Filter"
+#: ../browser/location_filter.pt:12
+msgid " Filter "
+msgstr ""
+
+#: ../browser/icalendar.py:99
+msgid "%s items imported"
+msgstr ""
+
+#: ../subtype.py:10
+msgid "A folder that holds event objects"
+msgstr ""
+
+#: ../subtype.py:9
+msgid "Calendar"
+msgstr ""
+
+#: ../browser/icalendar_import.pt:26
+msgid "Import iCalendar URL"
+msgstr ""
+
+#: ../browser/icalendar_import.pt:4
+msgid "Import iCalendar file"
+msgstr ""
+
+#. Default: "Filename:"
+#: ../browser/icalendar_import.pt:10
+msgid "filename_label"
+msgstr ""
+
+#: ../browser/navigation.pt:2
+msgid "import iCal"
+msgstr ""
+
+#: ../browser/icalendar_import.pt:19
+msgid "submit"
+msgstr ""
+
+#. Default: "URL:"
+#: ../browser/icalendar_import.pt:32
+msgid "url_label"
+msgstr ""
+
