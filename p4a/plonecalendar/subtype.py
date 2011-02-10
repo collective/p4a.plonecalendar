@@ -1,7 +1,7 @@
 from zope import interface
 from dateable.chronos import interfaces
 from p4a.subtyper.interfaces import IPortalTypedFolderishDescriptor
-from p4a.p4a.plonecalendar import P4ACalendarMF as _
+from p4a.plonecalendar import P4ACalendarMF as _
 
 class AbstractCalendarDescriptor(object):
     interface.implements(IPortalTypedFolderishDescriptor)
