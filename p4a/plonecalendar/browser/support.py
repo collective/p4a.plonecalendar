@@ -1,8 +1,9 @@
 from zope import component
 from zope import interface
 from dateable.chronos import interfaces
+from Products.Five.browser import BrowserView
 
-class Support(object):
+class Support(BrowserView):
     """A view that returns certain information regarding p4acal status.
     """
 

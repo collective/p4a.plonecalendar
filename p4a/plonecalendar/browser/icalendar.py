@@ -5,6 +5,7 @@ from Products.CMFCore.utils import getToolByName
 from dateable.kalends import IEventProvider, IWebEventCreator
 from plone.memoize import view
 from p4a.plonecalendar import P4ACalendarMF as _
+from Products.Five.browser import BrowserView
 
 class IiCalendarView(interface.Interface):
 
@@ -21,7 +22,7 @@ class IiCalendarView(interface.Interface):
         """
 
 
-class iCalendarView(object):
+class iCalendarView(BrowserView):
     """ Export the contents of this Calendar as an iCalendar file """
 
     interface.implements(IiCalendarView)

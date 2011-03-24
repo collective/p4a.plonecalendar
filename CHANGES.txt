@@ -9,6 +9,11 @@ Changelog
 
 - Added support for Spanisn translation [macagua]
 
+- make views subclass Products.Five.browser.BrowserView so that their templates
+  can be customized through portal_view_customizations
+  [swampmonkey]
+
+
 
 2.0a7 (2010-08-01)
 ------------------
