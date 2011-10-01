@@ -5,6 +5,8 @@ Changelog
 2.0a8 (unreleased)
 ------------------
 
+- ignore cases where ICalendarSupport is already properly uninstalled on uninstall step [iElectric] 
+
 - Added support for i18n [macagua]
 
 - Added support for Spanisn translation [macagua]
