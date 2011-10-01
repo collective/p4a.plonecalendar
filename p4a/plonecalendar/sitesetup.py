@@ -68,14 +68,18 @@ def unsetup_portal(portal, reinstall=False):
         
         # Make sure it got removed properly:
         assert(interfaces.ICalendarSupport not in sm.utilities._provided)
-        assert(not sm.utilities._adapters[0][interfaces.ICalendarSupport])
-        assert(not sm.utilities._subscribers[0][interfaces.ICalendarSupport][u''])
-        
+
         # Remove the interface from the lists, or we'll get useless warning messages forever:
         # Verify that there is no trace of the utility:
-        del sm.utilities._adapters[0][interfaces.ICalendarSupport]
-        del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
-    
+        try:
+            del sm.utilities._adapters[0][interfaces.ICalendarSupport]
+        except KeyError:
+            pass
+        try:
+            del sm.utilities._subscribers[0][interfaces.ICalendarSupport]
+        except KeyError:
+            pass
+
     if reinstall:
         # For reinstalls, this is all we need to do
         return
