@@ -4,57 +4,24 @@ from p4a.plonecalendar import content
 from p4a.common import site
 from p4a.z2utils import indexing
 from p4a.z2utils import utils
-from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
-from p4a.subtyper.interfaces import ISubtyped
-from Products.CMFCore import utils as cmfutils
-
-import logging
-logger = logging.getLogger('p4a.plonecalendar.sitesetup')
-
-
-def setup_portal(portal):
-    site.ensure_site(portal)
-    setup_site(portal)
-    indexing.ensure_object_provides(portal)
-
-    qi = cmfutils.getToolByName(portal, 'portal_quickinstaller')
-    qi.installProducts(['Marshall', 'Calendaring'])
-    setup_profile(portal)
+from Products.CMFCore.utils import getToolByName
+try:
+    from p4a.subtyper.sitesetup import setup_portal as subtyper_setup
+    from p4a.subtyper.interfaces import ISubtyped
+    SUBTYPER_INSTALLED = True
+except:
+    SUBTYPER_INSTALLED = False
     
-    subtyper_setup(portal)
+from Products.CMFCore import utils as cmfutils
+import logging
 
-def setup_profile(site):
-    setup_tool = site.portal_setup
-    for profile in ['dateable.chronos']:
-        profile = 'profile-%s:default' % profile
-        try:
-            setup_tool.runAllImportStepsFromProfile(profile)
-        except AttributeError: # BBB GenericSetup 1.4
-            setup_tool.setImportContext('profile-%s:default' % profile)
-            setup_tool.runAllImportSteps()
-
-def setup_site(site):
-    """Install all necessary components and configuration into the
-    given site.
-
-      >>> from dateable.chronos import interfaces
-      >>> from p4a.common.testing import MockSite
-
-      >>> site = MockSite()
-      >>> site.queryUtility(interfaces.ICalendarSupport) is None
-      True
-
-      >>> setup_site(site)
-      >>> site.getUtility(interfaces.ICalendarSupport)
-      <CalendarSupport ...>
-
-    """
-    sm = site.getSiteManager()
-    if not sm.queryUtility(interfaces.ICalendarSupport):
-        sm.registerUtility(content.CalendarSupport('calendar_support'),
-                           interfaces.ICalendarSupport)
-
-def unsetup_portal(portal, reinstall=False):
+def remove_all_old_crap(context, logger=None):
+    if logger is None:
+        logger = logging.getLogger('p4a.plonecalendar.sitesetup')
+    portal = getToolByName(context, 'portal_url').getPortalObject()
+    if not SUBTYPER_INSTALLED:
+        raise SystemError("You can not run this without first installing p4a.subtyper")
+    
     sm = portal.getSiteManager()
     component = sm.queryUtility(interfaces.ICalendarSupport)
     
@@ -80,9 +47,6 @@ def unsetup_portal(portal, reinstall=False):
         except KeyError:
             pass
 
-    if reinstall:
-        # For reinstalls, this is all we need to do
-        return
     # Now we need to remove all the marker interfaces.
     # First we need to make sure that object_provides is up to date.
     # Setting marker interfaces doesn't automatically update the catalog.
@@ -99,10 +63,19 @@ def unsetup_portal(portal, reinstall=False):
     logger.warn('Removed ICalendarEnhanced interface from %i objects for '
                 'cleanup' % count)
     
+
+def unsetup_portal(portal, reinstall=False):
+    if reinstall:
+        return
     # Remove the chronos calendar tool and put the old one back:
     # (XXX should be done in Chronos, but this is a quick hack)
     from Products.CMFPlone.CalendarTool import CalendarTool
     portal._delObject('portal_calendar')
     portal._setObject('portal_calendar', CalendarTool())
 
- 
+    # Reset all Calendar views
+    allobjects = portal.portal_catalog(Type=('Folder', 'Topic', 'Collection'))
+    for brain in allobjects:
+        ob = brain.getObject()
+        if getattr(ob, 'layout', None) in ('day.html', 'week.html', 'month.html', 'list.html', 'past.html'):
+            del ob.layout

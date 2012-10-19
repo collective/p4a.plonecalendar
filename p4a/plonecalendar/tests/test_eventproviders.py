@@ -120,10 +120,6 @@ class ATEventProviderTest(CalendarTestCase, EventProviderTestMixin):
                                startDate=DateTime('2006-09-30 08:30am GMT+0'),
                                endDate=DateTime('2006-09-30 09:30am GMT+0'))
 
-        # Activate calendaring capabilities on this folder
-        config = ICalendarConfig(cal)
-        config.calendar_activated = True
-
     def afterSetUp(self):
         CalendarTestCase.afterSetUp(self)
         self.eventSetUp()
@@ -141,11 +137,23 @@ class TopicEventProviderTest(ATEventProviderTest):
     def afterSetUp(self):
         self.eventSetUp()
         self.loginAsPortalOwner()
-        self.folder.invokeFactory('Topic', id='calendar-topic')
-        self.topic = self.folder['calendar-topic']
-        criteria = self.topic.addCriterion(
-            'portal_type', 'ATPortalTypeCriterion')
-        criteria.value = (u'Event',)
+        try:
+            # Plone < 4.2
+            self.folder.invokeFactory('Topic', id='calendar-topic')
+            self.topic = self.folder['calendar-topic']
+            criteria = self.topic.addCriterion(
+                'portal_type', 'ATPortalTypeCriterion')
+            criteria.value = (u'Event',)
+        except ValueError:
+            # Plone >= 4.2
+            self.folder.invokeFactory('Collection', id='calendar-topic')
+            self.topic = self.folder['calendar-topic']
+            query = [{
+                        'i': 'Type',
+                        'o': 'plone.app.querystring.operation.string.is',
+                        'v': 'Event',
+                    }]
+            self.topic.setQuery(query)
         self.provider = IEventProvider(self.topic)
 
     def test_createlink(self):
@@ -160,21 +168,33 @@ class TopicEventProviderTest(ATEventProviderTest):
 
         # First off, we're going to set a date restriction so that
         # only events in the future are shown:
-        date_crit = self.topic.addCriterion('start', 'ATFriendlyDateCriteria')
-        date_crit.setValue(0)
-        date_crit.setDateRange('+')
-        date_crit.setOperation('more')
-
-        # Adding a criteria other than time
-        subject_crit = self.topic.addCriterion('Subject', 'ATListCriterion')
-        subject_crit.setValue(['foo', 'bar'])
+        try: 
+            date_crit = self.topic.addCriterion('start', 'ATFriendlyDateCriteria')
+            date_crit.setValue(0)
+            date_crit.setDateRange('+')
+            date_crit.setOperation('more')
+    
+            # Adding a criteria other than time
+            subject_crit = self.topic.addCriterion('Subject', 'ATListCriterion')
+            subject_crit.setValue(['foo', 'bar'])
+        except AttributeError:
+            # Plone 4.2 or later
+            q = self.topic.getField('query').getRaw(self.topic)
+            q.append({'i':'start', 'o': 'plone.app.querystring.operation.date.afterToday', 'v': None})
+            # Adding a criteria other than time
+            q.append({'i':'Subject', 'o': 'plone.app.querystring.operation.selection.is', 'v': ['foo', 'bar']})
+            self.topic.setQuery(q)
 
         calls = []
-        def my_catalog(**kwargs):
-            calls.append(kwargs)
-            return LazyCat([])
-        self.folder.portal_catalog = my_catalog
-        self.folder.portal_catalog.searchResults = my_catalog
+        class my_catalog:
+            def __call__(self, **kwargs):
+                calls.append(kwargs)
+                return LazyCat([])
+            searchResults = __call__
+            def indexes(self):
+                return ['Subject', 'start', 'end', 'Type']
+            
+        self.folder.portal_catalog = my_catalog()
 
         # Now let's make sure that a call to the catalog is done with
         # the correct set of arguments, and that the criteria defined
@@ -196,26 +216,6 @@ class TopicEventProviderTest(ATEventProviderTest):
         self.assertEqual(calls[0]['start']['query'][1].strftime('%Y%m%d %H:%M'),
                          stop.strftime('%Y%m%d %H:%M'))
 
-class LocationFilterTest(CalendarTestCase):
-
-    def afterSetUp(self):
-        # Create folder.
-        self.folder.invokeFactory('Folder', id='calendarfolder')
-        calendarfolder = self.folder['calendarfolder']
-        # Activate calendaring capabilities on this folder
-        config = ICalendarConfig(calendarfolder)
-        config.calendar_activated = True
-
-    def testLocationFilter(self):
-        calendar = self.folder.calendarfolder
-        view = calendar.unrestrictedTraverse('month.html')
-        filter_html = view.render_filter()
-        self.failUnlessEqual(filter_html, '')
-        self.folder.portal_catalog.addIndex('location', 'FieldIndex')
-        filter_html = view.render_filter()
-        self.failUnless(filter_html.startswith('<span class="filter">'))
-
-
 class TestFunctional(PloneTestCase.FunctionalTestCase):
 
     def afterSetUp(self):
@@ -234,9 +234,6 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form = browser.getForm('folder-base-edit')
         form.getControl(name='title').value = 'A Calendar'
         form.getControl(name='form_submit').click()
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Changed subtype to Calendar" in browser.contents)
 
         # Create an event:
         browser.getLink(id='event').click()
@@ -255,18 +252,6 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         form.getControl(name='form_submit').click()
         self.failUnless('an-event' in browser.url)
 
-        # Make it recur.
-        link = browser.getLink(id='IRecurringEvent')
-        link.click()
-        self.failUnless("Changed subtype to Recurring Event" in browser.contents)
-
-        # Edit the recurrence info:
-        link = browser.getLink('Edit')
-        link.click()
-        form = browser.getForm('event-base-edit')
-        form.getControl(name='frequency').value = ['1']
-        form.getControl(name='form_submit').click()
-
         browser.getLink("A Calendar").click()
         folder_url = browser.url
         browser.open(folder_url + '?date=2007-04-01')
@@ -281,8 +266,6 @@ def test_suite():
     suite = TestSuite()
     suite.addTests(makeSuite(ATEventProviderTest))
     suite.addTests(makeSuite(TopicEventProviderTest))
-    # XXX This isn't implemented in chronos yet:
-    #suite.addTests(makeSuite(LocationFilterTest))
     suite.layer = layer.ZCMLLayer
 
     return suite

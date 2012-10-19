@@ -14,14 +14,7 @@ def load_zcml():
 
 load_zcml()
 
-# install p4a.subtyper profile only on Zope >= 2.10
-try:
-    from zope.app.annotation import tests
-except ImportError:
-    profiles = ('p4a.subtyper:default',)
-else:
-    profiles = ()
-PloneTestCase.setupPloneSite(products=['dateable.chronos'], extension_profiles=profiles)
+PloneTestCase.setupPloneSite(products=['dateable.chronos', 'p4a.plonecalendar'])
 
 
 class TestFunctional(PloneTestCase.FunctionalTestCase):
@@ -46,56 +39,30 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         else:
             self.submit_name = 'form.button.save'
         form.getControl(name=self.submit_name).click()
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Changed subtype to Calendar" in browser.contents)
+
         # Create a blank topic:
         browser.open(portal_url)
         browser.getLink('Collection').click()
-        form = browser.getForm('topic-base-edit')
+        form = browser.getForm(name='edit_form')
         form.getControl(name='title').value = 'A Calendar Collection'
         form.getControl(name=self.submit_name).click()
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Changed subtype to Calendar" in browser.contents)
         
     def _save(self, browser):
         f = open("/tmp/browser.html", "w")
         f.write(browser.contents)
         f.close()
         
-    def _isInCalendar(self, browser, text, calendar_start='class="ploneCalendar"'):
-        contents = browser.contents[browser.contents.index(calendar_start):]
+    def _isInCalendar(self, browser, text, calendar_start='id="calendar-view-tabs"', calendar_end=None):
+        if calendar_end is None:
+            calendar_end = 'id="viewlet-below-content"'
+            if not calendar_end in browser.contents:
+                # Plone 3:
+                calendar_end = 'id="clear-space-before-footer"'
+        contents = browser.contents[browser.contents.index(calendar_start):browser.contents.index(calendar_end)]
         contents = contents.replace('\n', ' ').replace('\t', ' ')
         contents = ' '.join([x.strip() for x in contents.split(' ') if x.strip()])
         return text in contents
-
-    def test_disabling(self):
-        browser = Browser()
-        browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
-        browser.handleErrors = False
-        portal_url = self.portal.absolute_url()
-        
-        browser.open(portal_url + '/a-calendar')
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Removed Calendar subtype" in browser.contents)
-        
-        # Enable it again:        
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Changed subtype to Calendar" in browser.contents)
-        
-        # Set month as a default view:
-        link = browser.getLink(id="list.html")
-        link.click()
-        self.failUnless("View changed." in browser.contents)
-        
-        # And disable it (this is a test for bug #65):
-        link = browser.getLink(id='ICalendarEnhanced')
-        link.click()
-        self.failUnless("Removed Calendar subtype" in browser.contents)
-        
+                
     def test_basic_views(self):
         browser = Browser()
         browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
@@ -136,10 +103,10 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         self.failUnless(self._isInCalendar(browser, "An Event"))
         # This event is in the past (unless you have borrowed Guidos time-machine)
         browser.getLink('Past').click()
-        self.failUnless(self._isInCalendar(browser, "An Event", 'class="eventlist"'))
+        self.failUnless(self._isInCalendar(browser, "An Event"))
         browser.getLink('List').click()
-        #import pdb;pdb.set_trace()
-        self.failIf(self._isInCalendar(browser, "An Event", 'class="eventlist"'))
+        
+        self.failIf(self._isInCalendar(browser, "An Event"))
 
     def test_navigation(self):
         browser = Browser()
@@ -166,37 +133,38 @@ class TestFunctional(PloneTestCase.FunctionalTestCase):
         browser.getLink(id="calendar-nav-next").click()
         self.failUnless(self._isInCalendar(browser, 'Th 10/04'))
         
-    def test_basic_recurrence(self):
-        browser = Browser()
-        browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
-        browser.handleErrors = False
-        portal_url = self.portal.absolute_url()
-        browser.open(portal_url + '/a-calendar')
+    # p4a.plonevent is now unsupported.
+    #def test_basic_recurrence(self):
+        #browser = Browser()
+        #browser.addHeader('Authorization', 'Basic %s:%s' % (portal_owner, default_password))
+        #browser.handleErrors = False
+        #portal_url = self.portal.absolute_url()
+        #browser.open(portal_url + '/a-calendar')
 
-        # Create an event:
-        browser.getLink(id='event').click()
-        form = browser.getForm('event-base-edit')
-        form.getControl(name='title').value = 'An Event'
-        form.getControl(name='startDate_year').value = ['2007']
-        form.getControl(name='startDate_month').value = ['04']
-        form.getControl(name='startDate_day').value = ['01']
-        form.getControl(name='startDate_hour').value = ['11']
-        form.getControl(name='startDate_minute').value = ['00']
-        form.getControl(name='endDate_year').value = ['2007']
-        form.getControl(name='endDate_month').value = ['04']
-        form.getControl(name='endDate_day').value = ['01']
-        form.getControl(name='endDate_hour').value = ['11']
-        form.getControl(name='endDate_minute').value = ['00']
-        # Make it recur.
-        form.getControl(name='frequency').value = ['1']
-        form.getControl(name=self.submit_name).click()
+        ## Create an event:
+        #browser.getLink(id='event').click()
+        #form = browser.getForm('event-base-edit')
+        #form.getControl(name='title').value = 'An Event'
+        #form.getControl(name='startDate_year').value = ['2007']
+        #form.getControl(name='startDate_month').value = ['04']
+        #form.getControl(name='startDate_day').value = ['01']
+        #form.getControl(name='startDate_hour').value = ['11']
+        #form.getControl(name='startDate_minute').value = ['00']
+        #form.getControl(name='endDate_year').value = ['2007']
+        #form.getControl(name='endDate_month').value = ['04']
+        #form.getControl(name='endDate_day').value = ['01']
+        #form.getControl(name='endDate_hour').value = ['11']
+        #form.getControl(name='endDate_minute').value = ['00']
+        ## Make it recur.
+        #form.getControl(name='frequency').value = ['1']
+        #form.getControl(name=self.submit_name).click()
         
-        browser.getLink("A Calendar").click()
-        folder_url = browser.url
-        browser.open(folder_url + '?date=2007-04-01')
-        self.failUnless(self._isInCalendar(browser, "An Event"))
-        browser.open(folder_url + '?date=2007-05-01')
-        self.failUnless(self._isInCalendar(browser, "An Event"))
+        #browser.getLink("A Calendar").click()
+        #folder_url = browser.url
+        #browser.open(folder_url + '?date=2007-04-01')
+        #self.failUnless(self._isInCalendar(browser, "An Event"))
+        #browser.open(folder_url + '?date=2007-05-01')
+        #self.failUnless(self._isInCalendar(browser, "An Event"))
 
 
 def test_suite():

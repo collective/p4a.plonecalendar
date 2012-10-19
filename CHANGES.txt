@@ -2,20 +2,37 @@ Changelog
 =========
 
 
-2.0a8 (unreleased)
+2.1b2 (unreleased)
 ------------------
 
-- ignore cases where ICalendarSupport is already properly uninstalled on uninstall step [iElectric] 
+- Nothing changed yet.
 
-- Added support for i18n [macagua]
 
-- Added support for Spanisn translation [macagua]
+2.1b1 (2012-08-04)
+------------------
+
+This version was tested with Plone 3.3.5, Plone 4.1.6 and Plone 4.2.
+
+- ignore cases where ICalendarSupport is already properly uninstalled on uninstall step. [iElectric] 
+
+- Added support for i18n. [macagua]
+
+- Added support for Spanisn translation. [macagua]
 
 - make views subclass Products.Five.browser.BrowserView so that their templates
-  can be customized through portal_view_customizations
-  [swampmonkey]
+  can be customized through portal_view_customizations. [swampmonkey]
+  
+- Removed tests for p4a.ploneevent. It hasn't had any new users since 2009, afaik. [regebro]
 
+- No longer uses p4a.subtyper. The calendar views are just normal views. [regebro]
 
+- Added upgrade step to get rid of all marker interfaces, etc. 
+  This also means we no longer need an uninstall, and therefore also no Extensions/Install.py
+  so they have also been removed. [regebro]
+
+- Now uses the z3c.autoinclude.plugin. [regebro]
+
+- Added Plone 4.1 and 4.2 support. [regebro]
 
 2.0a7 (2010-08-01)
 ------------------

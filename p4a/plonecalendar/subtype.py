@@ -1,20 +1,22 @@
-from zope import interface
-from dateable.chronos import interfaces
-from p4a.subtyper.interfaces import IPortalTypedFolderishDescriptor
-from p4a.plonecalendar import P4ACalendarMF as _
+## This whole file is obsolete.
 
-class AbstractCalendarDescriptor(object):
-    interface.implements(IPortalTypedFolderishDescriptor)
+#from zope import interface
+#from dateable.chronos import interfaces
+#from p4a.subtyper.interfaces import IPortalTypedFolderishDescriptor
+#from p4a.plonecalendar import P4ACalendarMF as _
 
-    title = _(u'Calendar')
-    description = _(u'A folder that holds event objects')
-    type_interface = interfaces.ICalendarEnhanced
-    icon = '++resource++chronos_support/calendar_icon.gif'
+#class AbstractCalendarDescriptor(object):
+    #interface.implements(IPortalTypedFolderishDescriptor)
 
-
-class FolderCalendarDescriptor(AbstractCalendarDescriptor):
-    for_portal_type = 'Folder'
+    #title = _(u'Calendar')
+    #description = _(u'A folder that holds event objects')
+    #type_interface = interfaces.ICalendarEnhanced
+    #icon = '++resource++chronos_support/calendar_icon.gif'
 
 
-class TopicCalendarDescriptor(AbstractCalendarDescriptor):
-    for_portal_type = 'Topic'
+#class FolderCalendarDescriptor(AbstractCalendarDescriptor):
+    #for_portal_type = 'Folder'
+
+
+#class TopicCalendarDescriptor(AbstractCalendarDescriptor):
+    #for_portal_type = 'Topic'

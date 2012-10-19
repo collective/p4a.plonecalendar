@@ -11,43 +11,60 @@
  
   <include package="p4a.z2utils" />
   <include package="p4a.common" />
-  <include package="p4a.subtyper" />
   <include package="dateable.chronos" />
+
+  <genericsetup:registerProfile
+      name="default"
+      title="P4A Plone Calendar"
+      directory="profiles/default"
+      description="Extension profile for p4a.plonecalendar setup."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+
+<genericsetup:upgradeStep
+        title="Upgrade to 2.1: Remove all marker interfaces"
+        description=""
+        source="0"
+        destination="1000"
+        handler="p4a.plonecalendar.sitesetup.remove_all_old_crap"
+        sortkey="1"
+        profile="p4a.plonecalendar:default"/>
 
   <browser:resourceDirectory
       name="p4aplonecalendar"
       directory="browser/resources"
       permission="zope.Public"
       />
-        
-  <five:implements
-      class="Products.ATContentTypes.content.folder.ATFolder"
-      interface="dateable.chronos.interfaces.IPossibleCalendar"
-      />
 
-  <five:implements
-      class="Products.ATContentTypes.content.folder.ATBTreeFolder"
-      interface="dateable.chronos.interfaces.IPossibleCalendar"
-      />
-
-  <five:implements
-      class="Products.ATContentTypes.content.topic.ATTopic"
-      interface="dateable.chronos.interfaces.IPossibleCalendar"
-      />
-
-  <adapter factory=".calendar.FolderCalendarConfig" />
+  <class class="Products.ATContentTypes.content.folder.ATFolder">
+      <implements interface="dateable.chronos.interfaces.IPossibleCalendar"/>
+  </class>
   <adapter factory=".eventprovider.ATEventProvider" />
   <adapter factory=".eventprovider.ATEventCreator" />
+
+  <class class="Products.ATContentTypes.content.topic.ATTopic">
+      <implements interface="dateable.chronos.interfaces.IPossibleCalendar"/>
+  </class>
   <adapter factory=".eventprovider.TopicEventProvider" />
   <adapter factory=".eventprovider.TopicEventCreator" />
+
+  <configure zcml:condition="installed plone.app.collection">
+      <class class="plone.app.collection.collection.Collection">
+          <implements interface="dateable.chronos.interfaces.IPossibleCalendar"/>
+      </class>
+      <adapter factory=".eventprovider.CollectionEventProvider" />
+      <adapter factory=".eventprovider.CollectionEventCreator" />
+  </configure>
+
   <adapter factory=".eventprovider.BrainEvent" />
   <adapter factory=".eventprovider.RecurringBrainEvent" 
            provides="dateable.kalends.ITimezonedRecurringEvent" />
 
+  <!-- I don't know why these are needed. /regebro -->
   <!-- Zope 2.9 -->
   <subscriber
       zcml:condition="installed zope.app.event.interfaces.IObjectModifiedEvent"
-      for="dateable.chronos.interfaces.ICalendarEnhanced
+      for="dateable.chronos.interfaces.IPossibleCalendar
            zope.app.event.interfaces.IObjectModifiedEvent"
       handler=".update_catalog"
       />
@@ -55,7 +72,7 @@
   <!-- Zope >= 2.10 -->
   <subscriber
       zcml:condition="installed zope.lifecycleevent.interfaces.IObjectModifiedEvent"
-      for="dateable.chronos.interfaces.ICalendarEnhanced
+      for="dateable.chronos.interfaces.IPossibleCalendar
            zope.lifecycleevent.interfaces.IObjectModifiedEvent"
       handler=".update_catalog"
       />
@@ -68,16 +85,6 @@
       />
 
   <include package=".browser" />
-
-  <!-- Subtyping -->
-  
-  <utility
-      name="p4a.plonecalendar.FolderCalendar"
-      factory=".subtype.FolderCalendarDescriptor" />
-
-  <utility
-      name="p4a.plonecalendar.TopicCalendar"
-      factory=".subtype.TopicCalendarDescriptor" />
  
   <five:registerPackage package="." />
 

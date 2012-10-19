@@ -5,14 +5,70 @@
 Overview
 ========
 
-p4a.plonecalendar is a project which extends the p4a.calendar framework to
-run natively within a Plone environment.  It contains the extensions that
-require Plone, and the adaptions to Plone. This is mainly support for Plone
-event types and iCalendar import/export.
+p4a.plonecalendar provides nice calendaring views for Plone, specifically
+a Month, Week and Day view, and also nice lists of past and previous 
+events.
 
-Requirements
-============
-Plone 3.x. Tested with 3.2 and 3.3 but may work with other versions.
+There are today better calendaring views for Plone, specifcally solgema.fullcalendar.
+However, that's a JavaScript calendar, so if you need a calendar that you can use
+without JavaScript, for example for accessibility reasons, then p4a.plonecalendar
+is a good choice.
+
+Upgrading from version 2.0
+==========================
+
+p4a.plonecalendar 2.1 removes the dependency on p4a.subtyper. As a result
+upgrading to p4a.plonecalendar can be a bit of work.
+
+Step 1:
+-------
+
+Firstly you need to add p4a.subtyper to your buildout.cfg.
+
+Under [instance] add "4a.subtyper" to the eggs property, remove
+p4a.plonecalendars zcml entries and replace them with p4a.subtypers zcml
+entries. The result should look something like this:
+
+    [instance]
+    ...
+    
+    eggs = 
+        Plone
+        p4a.plonecalendar
+        p4a.subtyper
+        ${buildout:eggs}
+
+    zcml = 
+        p4a.subtyper
+        p4a.subtyper-meta
+
+Run buildout and restart the server.
+
+Step 2:
+-------
+
+Go to the ZMI and open the Upgrades tab of portal_setup: 
+   http://yourplonesite/portal_setup/manage_upgrades
+   
+Choose the p4a.plonecalendar:default profile, and the upgrade named
+"Upgrade to 2.1: Remove all marker interfaces" should be visible.
+Select it and press "Upgrade."
+
+Step 3:
+-------
+
+Then go to the quickinstaller: 
+   http://yourplonesite/portal_quickinstaller/manage_installProductsForm
+   
+Here, reinstall P4A Plone Calendar. You will after this have to go to all
+calendars and select a Calendar View as default view again.
+
+Step 4 (optional):
+------------------
+
+If you have no other parts of Plone4Artists installed you can also uninstall
+Plone4Artists Subtyper, and remove it from the buildout.cfg.
+
 
 Installation
 ============

@@ -11,10 +11,56 @@
       filter="object/@@p4acalsupport/support_enabled"
       permission="cmf.ModifyPortalContent"
       />
+      
+  <zope:include package="Products.CMFCore" />
+  <zope:include package="plone.app.contentmenu"/>
+  
+  <!-- Titles for the views -->
+  <menuItem
+      for="dateable.chronos.interfaces.IPossibleCalendar"
+      menu="plone_displayviews"
+      title="Day calendar view"
+      action="@@day.html"
+      description="Show as a calendar for one day"
+      />
+      
+  <menuItem
+      for="dateable.chronos.interfaces.IPossibleCalendar"
+      menu="plone_displayviews"
+      title="Week calendar view"
+      action="@@week.html"
+      description="Show as a calendar for one week"
+      />
+
+  <menuItem
+      for="dateable.chronos.interfaces.IPossibleCalendar"
+      menu="plone_displayviews"
+      title="Month calendar view"
+      action="@@month.html"
+      description="Show as a calendar for one month"
+      />
+
+  <menuItem
+      for="dateable.chronos.interfaces.IPossibleCalendar"
+      menu="plone_displayviews"
+      title="Upcoming events listing"
+      action="@@list.html"
+      description="Shows a list of upcoming events"
+      />
+
+  <menuItem
+      for="dateable.chronos.interfaces.IPossibleCalendar"
+      menu="plone_displayviews"
+      title="Past events listing"
+      action="@@past.html"
+      description="Shows a list of pas events"
+      />
+
+  <!-- End menu titles -->
 
   <page
       name="icalendar.ics"
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       permission="zope2.View"
       class=".icalendar.iCalendarView"
       template="icalendar.pt"
@@ -31,7 +77,7 @@
   
   <page
       name="import_from_url"
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       permission="cmf.ModifyPortalContent"
       class=".icalendar.iCalendarView"
       attribute="import_from_url"
@@ -39,7 +85,7 @@
 
   <page
       name="import_from_hcal"
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       permission="cmf.ModifyPortalContent"
       class=".icalendar.iCalendarView"
       attribute="import_from_hcal"
@@ -47,7 +93,7 @@
 
   <page
       name="import.html"
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       permission="zope2.View"
       class=".icalendar.iCalendarView"
       template="icalendar_import.pt"
@@ -60,7 +106,7 @@
         />
         
   <viewlet
-      for="dateable.chronos.interfaces.ICalendarEnhanced"
+      for="dateable.chronos.interfaces.IPossibleCalendar"
       name="chronos.p4aimportexport"
       manager="plone.app.layout.viewlets.interfaces.IBelowContentTitle"
       template="navigation.pt"

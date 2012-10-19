@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<object name="Topic">
+ <property name="view_methods" purge="false" >
+  <element value="day.html"/>
+  <element value="week.html"/>
+  <element value="month.html"/>
+  <element value="list.html"/>
+  <element value="past.html"/>
+</property>
+</object>
