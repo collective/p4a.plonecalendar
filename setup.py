@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 version = '2.1b2.dev0'
 
-f = open('README.txt')
+f = open('README.rst')
 readme = f.read()
 f.close()
 
@@ -17,8 +17,11 @@ setup(name='p4a.plonecalendar',
       long_description=readme + '\n\n' + changes,
       classifiers=[
           'Framework :: Zope2',
-          'Framework :: Zope3',
           'Framework :: Plone',
+	  'Framework :: Plone :: 4.0',
+          'Framework :: Plone :: 4.1',
+          'Framework :: Plone :: 4.2',
+          'Framework :: Plone :: 4.3',
           'Programming Language :: Python',
           'License :: OSI Approved :: GNU General Public License (GPL)',
           'Topic :: Software Development :: Libraries :: Python Modules',
@@ -34,7 +37,7 @@ setup(name='p4a.plonecalendar',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Plone',
+          'Products.CMFPlone',
           'plone.memoize',
           'dateable.chronos',
           'dateable.kalends',
