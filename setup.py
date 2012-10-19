@@ -41,7 +41,7 @@ setup(name='p4a.plonecalendar',
           'plone.memoize',
           'dateable.chronos',
           'dateable.kalends',
-          'p4a.calendar >= 1.2dev',
+          'p4a.calendar >= 2.1b1',
       ],
       entry_points="""
       # -*- entry_points -*-
