@@ -43,6 +43,8 @@ setup(name='p4a.plonecalendar',
           'dateable.kalends',
           'p4a.common >= 1.0.1',
           'p4a.z2utils >= 1.0',
+          'Products.PloneTestCase',
+          'zope.globalrequest',
       ],
       entry_points="""
       # -*- entry_points -*-
