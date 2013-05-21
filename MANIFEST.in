@@ -1,5 +1,10 @@
 include docs/*.txt
+include docs/*.GPL
 include *.rst
 include *.cfg
 include *.txt
 recursive-include p4a *
+
+# added by check_manifest.py
+include *.py
+include .travis.yml
